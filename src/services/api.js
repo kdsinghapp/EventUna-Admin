@@ -101,7 +101,7 @@ class ApiService {
   async addNote(noteData) {
     return this.request("/add-notes", {
       method: "POST",
-      body: JSON.stringify(notes),
+      body: JSON.stringify(noteData),
     })
   }
 
@@ -137,6 +137,33 @@ class ApiService {
       body: JSON.stringify(preferenceData),
     })
   }
+
+  async addEventType(eventType) {
+    return this.request("/event/event-type", {
+      method: "POST",
+      body: JSON.stringify(eventType),
+    })
+
+  }
+  async addEventCategory(categoryName, eventTypeId) {
+    // Send a single JSON object with both category and eventType (expected by backend)
+    return this.request("/event/event-category", {
+      method: "POST",
+      body: JSON.stringify({ category: categoryName, eventType: eventTypeId }),
+    })
+  }
+  async getEventTypes() {
+    return this.request("/event/event-type")    
+  }
+
+  async getEventCategories(eventTypeId) {
+    return this.request(`/event/event-category/${eventTypeId}`)
+  }
+
+  async getAllEventCategories() {
+    return this.request("/event/event-category")
+  }
 }
 
-export default new ApiService()
+const apiServiceInstance = new ApiService();
+export default apiServiceInstance;

@@ -1,25 +1,3 @@
-// import { BrowserRouter, Routes, Route } from "react-router-dom";
-// import Login from "./pages/Login";
-// import SubServices from "./pages/SubServices";
-// import Preferences from "./pages/Preferences";
-// import Services from "./pages/Services";
-// import SubServicesList from "./pages/SubServicesList";
-// import AdditionalServices from "./pages/AdditionalServices";
-
-// export default function App() {
-//   return (
-//     <BrowserRouter>
-//       <Routes>
-//         <Route path="/" element={<Login />} />
-//         <Route path="/dashboard" element={<Services />} />
-//         <Route path="/subservices" element={<SubServices />} />
-//         <Route path="/preferences" element={<Preferences />} />
-//         <Route path="/merchant-subservices" element={<SubServicesList />} />
-//         <Route path="/additional-services" element={<AdditionalServices />} />
-//       </Routes>
-//     </BrowserRouter>
-//   );
-// }
 "use client"
 
 import { useState } from "react"
@@ -34,9 +12,7 @@ import AdditionalServices from "./components/AdditionalServices"
 import PlacePreferences from "./components/PlacePreferences"
 import SubServices from "./components/SubServices"
 import Login from "./components/Login"
-
-
-import { useEffect } from "react"
+import EventTypes from "./components/EventTypes"
 
 function App() {
   const [activeSection, setActiveSection] = useState("dashboard")
@@ -68,6 +44,10 @@ function App() {
         return <PlacePreferences />
       case "subservices":
         return <SubServices activeTab="add" />
+      case "add-event-type":
+        return <EventTypes />
+      case "add-event-category":
+        return <EventTypes />
       default:
         return <Dashboard />
     }

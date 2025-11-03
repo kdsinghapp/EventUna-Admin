@@ -70,21 +70,22 @@ const AdditionalServices = () => {
     }
   }
 
-  const toggleStatus = async (id) => {
-    const service = services.find((s) => s.id === id)
-    if (!service) return
-    const newStatus = service.status === "active" ? "inactive" : "active"
-    try {
-      await apiService.updateAdditionalService(id, { status: newStatus })
-      setServices((prev) =>
-        prev.map((s) =>
-          s.id === id ? { ...s, status: newStatus } : s
-        )
-      )
-    } catch (error) {
-      alert("Failed to update status.")
-    }
-  }
+  // Commented out as not currently used
+  // const toggleStatus = async (id) => {
+  //   const service = services.find((s) => s.id === id)
+  //   if (!service) return
+  //   const newStatus = service.status === "active" ? "inactive" : "active"
+  //   try {
+  //     await apiService.updateAdditionalService(id, { status: newStatus })
+  //     setServices((prev) =>
+  //       prev.map((s) =>
+  //         s.id === id ? { ...s, status: newStatus } : s
+  //       )
+  //     )
+  //   } catch (error) {
+  //     alert("Failed to update status.")
+  //   }
+  // }
 
   const handleDelete = async (id) => {
     try {
@@ -108,11 +109,12 @@ const AdditionalServices = () => {
   }
 
 
-  const handleEdit = (service) => {
-    setEditId(service.id)
-    setEditName(service.name)
-    setShowEditModal(true)
-  }
+  // Commented out as not currently used
+  // const handleEdit = (service) => {
+  //   setEditId(service.id)
+  //   setEditName(service.name)
+  //   setShowEditModal(true)
+  // }
 
   const handleEditChange = (e) => {
     setEditName(e.target.value)
