@@ -105,6 +105,10 @@ class ApiService {
     })
   }
 
+  async getNotes() {
+    return this.request("/event/notes")
+  }
+
   // Additional Services
   async addAdditionalService(serviceData) {
     return this.request("/admin/additional-services", {
