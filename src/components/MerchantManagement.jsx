@@ -162,7 +162,7 @@ const MerchantManagement = () => {
       {/* Header and Filter Controls */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 pb-4 border-b border-slate-100">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900 tracking-tight">
+          <h1 className="text-2xl font-bold text-slate-950 tracking-tight">
             Merchant Management
           </h1>
           <p className="text-xs text-slate-500 mt-0.5">
@@ -210,9 +210,9 @@ const MerchantManagement = () => {
       )}
 
       {/* Merchants Table Card */}
-      <div className="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
+      <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-slate-100">
+          <table className="min-w-full divide-y divide-slate-200">
             <thead className="bg-slate-100">
               <tr>
                 <th className="px-4 py-3 text-left text-xs font-bold text-slate-700 uppercase tracking-wider">
@@ -232,7 +232,7 @@ const MerchantManagement = () => {
                 </th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-slate-100">
+            <tbody className="bg-white divide-y divide-slate-200">
               {merchants
                 .filter((merchant) => {
                   if (statusFilter === "all") return true;

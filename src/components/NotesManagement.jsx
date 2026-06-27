@@ -106,11 +106,32 @@ const NotesManagement = () => {
   }
 
   return (
-    <div className="space-y-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-      {/* Header Info */}
-      <div className="pb-6 border-b border-slate-100">
-        <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight">Notes Management</h1>
-        <p className="text-sm text-slate-500 mt-1">Write, archive, and manage administrative notes for system updates.</p>
+    <div className="space-y-6 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      {/* Header Info and Add Note Inline Form */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-6 border-b border-slate-200">
+        <div>
+          <h1 className="text-2xl font-bold text-slate-950 tracking-tight">Notes Management</h1>
+          <p className="text-xs text-slate-500 mt-0.5">Write, archive, and manage administrative notes for system updates.</p>
+        </div>
+
+        {/* Input field and Add Note button inline */}
+        <form onSubmit={handleAddNote} className="flex-1 max-w-xl flex items-center gap-3">
+          <input
+            type="text"
+            value={note}
+            onChange={(e) => setNote(e.target.value)}
+            className="flex-1 min-w-[200px] px-4 py-2.5 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm placeholder-slate-400"
+            placeholder="Type note details here..."
+            required
+          />
+          <button
+            type="submit"
+            className="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-sm font-semibold transition-all shadow-sm hover:shadow shrink-0 flex items-center gap-2"
+            disabled={formSubmitting || !note.trim()}
+          >
+            {formSubmitting ? "Adding..." : "Add Note"}
+          </button>
+        </form>
       </div>
 
       {error && (
@@ -122,117 +143,73 @@ const NotesManagement = () => {
         </div>
       )}
 
-      {/* Grid Content */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-        <div className="lg:col-span-7 space-y-6">
-          <div className="bg-white rounded-2xl border border-slate-100 p-6 shadow-sm">
-            <div className="flex items-center justify-between mb-6 pb-4 border-b border-slate-100">
-              <h3 className="text-lg font-bold text-slate-900">
-                All Notes ({notes.length})
-              </h3>
-            </div>
-
-            {loading && notes.length === 0 ? (
-              <div className="flex items-center justify-center py-12">
-                <div className="w-8 h-8 rounded-full border-4 border-slate-100 border-t-indigo-600 animate-spin"></div>
-              </div>
-            ) : notes.length > 0 ? (
-              <div className="space-y-4 max-h-[70vh] overflow-y-auto pr-2">
-                {notes.map((noteItem) => (
-                  <div
-                    key={noteItem.id}
-                    className="bg-slate-50/50 hover:bg-slate-50 border border-slate-100 rounded-2xl p-5 transition-all duration-150 relative group"
-                  >
-                    <div className="flex items-start justify-between gap-4">
-                      <div className="flex-1 space-y-3">
-                        <p className="text-sm text-slate-700 leading-relaxed font-medium break-words">
-                          {noteItem.content}
-                        </p>
-
-                        <div className="flex flex-wrap items-center gap-3 text-[11px] text-slate-400 font-semibold pt-2 border-t border-slate-100/50">
-                          <span className="flex items-center gap-1 bg-slate-200/50 px-2 py-0.5 rounded text-slate-600">
-                            <span className="w-1.5 h-1.5 rounded-full bg-slate-500"></span>
-                            By {noteItem.author}
-                          </span>
-                          {noteItem.createdAt && (
-                            <span className="text-slate-400 font-medium">
-                              {noteItem.createdAt}
-                            </span>
-                          )}
-                        </div>
-                      </div>
-
-                      {/* Small floating actions */}
-                      <div className="flex items-center gap-2 shrink-0">
-                        <button
-                          onClick={() => handleStartEdit(noteItem)}
-                          className="p-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-600 hover:text-indigo-700 rounded-lg transition-colors border border-indigo-100"
-                          title="Edit Note"
-                        >
-                          <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-                          </svg>
-                        </button>
-                        <button
-                          onClick={() => setNoteToDelete(noteItem.id)}
-                          className="p-1.5 bg-rose-50 hover:bg-rose-100 text-rose-600 hover:text-rose-700 rounded-lg transition-colors border border-rose-100"
-                          title="Delete Note"
-                        >
-                          <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-4v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                          </svg>
-                        </button>
-                      </div>
+      {/* Downside Notes Table Card */}
+      <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="min-w-full divide-y divide-slate-200">
+            <thead className="bg-slate-100">
+              <tr>
+                <th className="px-6 py-3 text-left text-xs font-bold text-slate-700 uppercase tracking-wider w-7/12">
+                  Note Content
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-bold text-slate-700 uppercase tracking-wider w-2/12">
+                  Created By
+                </th>
+                <th className="px-6 py-3 text-right text-xs font-bold text-slate-700 uppercase tracking-wider w-1/12">
+                  Actions
+                </th>
+              </tr>
+            </thead>
+            <tbody className="bg-white divide-y divide-slate-200">
+              {loading && notes.length === 0 ? (
+                <tr>
+                  <td colSpan={4} className="px-6 py-10 text-center">
+                    <div className="flex flex-col items-center justify-center space-y-2">
+                      <div className="w-8 h-8 rounded-full border-4 border-slate-100 border-t-indigo-600 animate-spin"></div>
+                      <p className="text-xs font-medium text-slate-400">Loading notes...</p>
                     </div>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div className="text-center py-12 text-slate-400 font-medium">
-                No notes found. Create your first note on the left.
-              </div>
-            )}
-          </div>
+                  </td>
+                </tr>
+              ) : notes.length > 0 ? (
+                notes.map((noteItem) => (
+                  <tr key={noteItem.id} className="hover:bg-slate-50/70 transition-colors duration-150">
+                    <td className="px-6 py-4">
+                      <p className="text-xs font-semibold text-slate-900 break-words leading-relaxed whitespace-pre-wrap">
+                        {noteItem.content}
+                      </p>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-bold bg-indigo-50 text-indigo-700 border border-indigo-100/50">
+                        <span className="w-1 h-1 rounded-full bg-indigo-500"></span>
+                        {noteItem.author}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-right text-xs font-medium space-x-3">
+                      <button
+                        onClick={() => handleStartEdit(noteItem)}
+                        className="text-indigo-600 hover:text-indigo-800 transition-colors font-semibold"
+                      >
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => setNoteToDelete(noteItem.id)}
+                        className="text-rose-600 hover:text-rose-800 transition-colors font-semibold"
+                      >
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan={4} className="px-6 py-8 text-center text-slate-400 font-medium text-xs">
+                    No notes found. Add a note using the input above.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
         </div>
-        {/* Left Side: Create Form */}
-        <div className="lg:col-span-5">
-          <div className="bg-white rounded-2xl border border-slate-100 p-6 shadow-sm space-y-5">
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-lg bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-600">
-                <svg className="w-4.5 h-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                </svg>
-              </div>
-              <h2 className="text-base font-bold text-slate-900 uppercase tracking-wider">Add New Note</h2>
-            </div>
-
-            <form onSubmit={handleAddNote} className="space-y-4">
-              <div>
-                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Note Content</label>
-                <textarea
-                  value={note}
-                  onChange={(e) => setNote(e.target.value)}
-                  className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm placeholder-slate-400 resize-none leading-relaxed"
-                  rows="5"
-                  placeholder="Type note details here..."
-                  required
-                />
-              </div>
-
-              <button
-                type="submit"
-                className="w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-sm font-semibold transition-all shadow-sm hover:shadow active:scale-98 disabled:opacity-50"
-                disabled={formSubmitting || !note.trim()}
-              >
-                {formSubmitting ? "Saving Note..." : "Add Note"}
-              </button>
-            </form>
-          </div>
-        </div>
-
-        {/* Right Side: List of Notes */}
-
-
       </div>
 
       {/* Confirmation Modal */}
@@ -286,7 +263,7 @@ const NotesManagement = () => {
                     setNoteToEdit(null)
                     setEditContent("")
                   }}
-                  className="px-4 py-2.5 text-sm font-semibold text-slate-650 hover:bg-slate-50 rounded-xl transition-all"
+                  className="px-4 py-2.5 text-sm font-semibold text-slate-655 hover:bg-slate-50 rounded-xl transition-all"
                 >
                   Cancel
                 </button>

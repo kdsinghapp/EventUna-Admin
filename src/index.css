@@ -4,6 +4,33 @@
   font-family: 'Outfit', sans-serif;
 }
 
+/* Fallback for Tailwind v4 border resets */
+.border {
+  border-width: 1px !important;
+  border-style: solid !important;
+}
+.border-t {
+  border-top-width: 1px !important;
+  border-style: solid !important;
+}
+.border-b {
+  border-bottom-width: 1px !important;
+  border-style: solid !important;
+}
+.border-l {
+  border-left-width: 1px !important;
+  border-style: solid !important;
+}
+.border-r {
+  border-right-width: 1px !important;
+  border-style: solid !important;
+}
+.border-2 {
+  border-width: 2px !important;
+  border-style: solid !important;
+}
+
+
 body {
   margin: 0;
   font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
@@ -97,25 +124,28 @@ main textarea:focus {
 
 /* Premium Table styling overrides */
 table {
-  border-collapse: separate !important;
-  border-spacing: 0 !important;
+  border-collapse: collapse !important;
   width: 100% !important;
 }
 
 thead th {
-  background-color: #f8fafc !important;
-  border-bottom: 1.5px solid #edf2f7 !important;
-  color: #64748b !important;
+  background-color: #e2e8f0 !important;
+  border-bottom: 2px solid #cbd5e1 !important;
+  color: #0f172a !important;
   font-size: 0.725rem !important;
   font-weight: 700 !important;
   letter-spacing: 0.05em !important;
-  padding: 0.625rem 1rem !important;
+  padding: 0.75rem 1rem !important;
   text-transform: uppercase !important;
 }
 
+tbody tr {
+  border-bottom: 1px solid #e2e8f0 !important;
+}
+
 tbody td {
-  border-bottom: 1px solid #edf2f7 !important;
-  padding: 0.625rem 1rem !important;
+  border-bottom: 1px solid #e2e8f0 !important;
+  padding: 0.75rem 1rem !important;
   font-size: 0.825rem !important;
   color: #334155 !important;
 }
