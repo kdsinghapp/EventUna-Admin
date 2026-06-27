@@ -3,7 +3,7 @@ const BASE_URL = "https://eventuna.com/api"
 class ApiService {
   // New: Get all users (V2)
   async getAllUsersV2() {
-    return this.request("/auth/all-users")
+    return this.request("/admin/all-users")
   }
   constructor() {
     this.baseUrl = BASE_URL
@@ -157,7 +157,7 @@ class ApiService {
     })
   }
   async getEventTypes() {
-    return this.request("/event/event-type")    
+    return this.request("/event/event-type")
   }
 
   async getEventCategories(eventTypeId) {
