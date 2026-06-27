@@ -1,34 +1,43 @@
 "use client"
 
+import { FaBars, FaBell, FaUserCircle } from "react-icons/fa"
+
 const Header = ({ toggleSidebar, onLogout }) => {
   return (
-    <header className="bg-white shadow-sm border-b border-gray-200 px-6 py-4">
+    <header className="bg-white/80 backdrop-blur-md border-b border-slate-150 px-6 py-4 sticky top-0 z-30">
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-4">
           <button
             onClick={toggleSidebar}
-            className="lg:hidden p-2 rounded-md text-gray-500 hover:text-gray-700 hover:bg-gray-100"
+            className="lg:hidden p-2 rounded-xl text-slate-500 hover:text-slate-700 hover:bg-slate-50 transition-all cursor-pointer"
           >
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-            </svg>
+            <FaBars className="w-5 h-5" />
           </button>
-          <h2 className="text-2xl font-semibold text-gray-800">Event Management System</h2>
+          <h2 className="text-xl font-bold text-slate-800 tracking-tight">Event Una</h2>
         </div>
 
-        <div className="flex items-center space-x-4">
-          <div className="flex items-center space-x-2">
-            <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
-              <span className="text-white text-sm font-medium">A</span>
-            </div>
-            <span className="text-sm font-medium text-gray-700">Admin</span>
-          </div>
-          <button
-            onClick={onLogout}
-            className="px-4 py-2 text-sm font-medium text-red-600 hover:text-red-700 hover:bg-red-50 rounded-md transition-colors duration-200"
-          >
-            Logout
+        <div className="flex items-center space-x-5">
+          {/* Notification Icon */}
+          <button className="relative p-2 rounded-xl text-slate-400 hover:text-slate-600 hover:bg-slate-50 transition-all cursor-pointer">
+            <FaBell className="w-5 h-5" />
+            <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-indigo-500 rounded-full"></span>
           </button>
+
+          {/* Vertical Divider */}
+          <span className="w-px h-6 bg-slate-200"></span>
+
+          {/* User Info & Quick Actions */}
+          <div className="flex items-center space-x-3">
+            <div className="flex items-center space-x-2.5">
+              <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-indigo-500 to-violet-600 flex items-center justify-center shadow-sm text-white font-semibold text-sm">
+                A
+              </div>
+              <div className="hidden sm:block text-left">
+                <p className="text-sm font-semibold text-slate-800">Administrator</p>
+                <p className="text-xs text-slate-450">Super User</p>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </header>
