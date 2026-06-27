@@ -3,8 +3,6 @@ import {
   FaStore,
   FaCog,
   FaUsers,
-  FaCheckCircle,
-  FaExclamationCircle,
   FaPlus,
   FaSlidersH,
   FaChartLine,
