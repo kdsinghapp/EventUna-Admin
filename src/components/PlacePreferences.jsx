@@ -34,85 +34,61 @@ const PlacePreferences = () => {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold text-gray-900">Place Preferences</h1>
-      </div>
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+      {/* Header Info and Add Preference Inline Form */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-6 border-b border-slate-200">
+        <div>
+          <h1 className="text-2xl font-bold text-slate-950 tracking-tight">Place Preferences</h1>
+          <p className="text-xs text-slate-500 mt-0.5">Manage preferences for participating facilities and venue spaces.</p>
+        </div>
 
-      {/* Add Preference Form */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">Add Place Preference</h2>
-        <form onSubmit={handleAddPreference} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Preference Name</label>
-            <input
-              type="text"
-              value={preference}
-              onChange={(e) => setPreference(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="Enter place preference..."
-              required
-            />
-          </div>
+        {/* Input field and Add Preference button inline */}
+        <form onSubmit={handleAddPreference} className="flex-1 max-w-md flex items-center gap-3">
+          <input
+            type="text"
+            value={preference}
+            onChange={(e) => setPreference(e.target.value)}
+            className="flex-1 min-w-[200px] px-4 py-2.5 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm placeholder-slate-400"
+            placeholder="Enter place preference..."
+            required
+          />
           <button
             type="submit"
-            className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors duration-200"
+            className="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-sm font-semibold transition-all shadow-sm hover:shadow shrink-0"
+            disabled={!preference.trim()}
           >
             Add Preference
           </button>
         </form>
       </div>
 
-      {/* Preferences List */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-        <div className="px-6 py-4 border-b border-gray-200">
-          <h2 className="text-lg font-semibold text-gray-900">All Place Preferences</h2>
-        </div>
-
+      {/* Downside Preferences Table Card */}
+      <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
+          <table className="min-w-full divide-y divide-slate-200">
+            <thead className="bg-slate-100">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-bold text-slate-700 uppercase tracking-wider w-6/12">
                   Preference Name
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-bold text-slate-700 uppercase tracking-wider w-2/12">
                   Created Date
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Status
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-right text-xs font-bold text-slate-700 uppercase tracking-wider w-2/12">
                   Actions
                 </th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
+            <tbody className="bg-white divide-y divide-slate-200">
               {preferences.map((pref) => (
-                <tr key={pref.id} className="hover:bg-gray-50">
+                <tr key={pref.id} className="hover:bg-slate-50/70 transition-colors duration-150">
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm font-medium text-gray-900">{pref.name}</div>
+                    <div className="text-xs font-semibold text-slate-900">{pref.name}</div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{pref.createdAt}</td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    {pref.isDefault ? (
-                      <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">
-                        Default
-                      </span>
-                    ) : (
-                      <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800">
-                        Active
-                      </span>
-                    )}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
-                    {!pref.isDefault && (
-                      <button onClick={() => setAsDefault(pref.id)} className="text-blue-600 hover:text-blue-900">
-                        Set Default
-                      </button>
-                    )}
-                    <button className="text-green-600 hover:text-green-900">Edit</button>
-                    <button className="text-red-600 hover:text-red-900">Delete</button>
+                  <td className="px-6 py-4 whitespace-nowrap text-xs text-slate-500 font-medium">{pref.createdAt}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-right text-xs font-medium space-x-3">
+                    <button className="text-green-600 hover:text-green-800 transition-colors font-semibold">Edit</button>
+                    <button className="text-rose-600 hover:text-rose-800 transition-colors font-semibold">Delete</button>
                   </td>
                 </tr>
               ))}

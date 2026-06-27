@@ -94,15 +94,81 @@ const EventTypes = () => {
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
-      {/* Page Title & Intro */}
-      <div className="pb-6 border-b border-slate-100">
-        <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight">
-          Event Types & Categories
-        </h1>
-        <p className="text-sm text-slate-500 mt-1">
-          Configure event classifications and group sub-services under targeted categories.
-        </p>
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+      {/* Header Info and Actions Grid at the Top */}
+      <div className="pb-6 border-b border-slate-200 space-y-6">
+        <div>
+          <h1 className="text-2xl font-bold text-slate-950 tracking-tight">Event Types & Categories</h1>
+          <p className="text-xs text-slate-500 mt-0.5">Configure event classifications and group sub-services under targeted categories.</p>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-end">
+          {/* Form 1: Add Event Type */}
+          <form onSubmit={handleAddEventType} className="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex items-end gap-3">
+            <div className="flex-1">
+              <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">
+                New Event Type
+              </label>
+              <input
+                type="text"
+                value={eventTypeName}
+                onChange={(e) => setEventTypeName(e.target.value)}
+                className="w-full px-4 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm placeholder-slate-400"
+                placeholder="e.g. Wedding, Birthday"
+                required
+              />
+            </div>
+            <button
+              type="submit"
+              className="px-5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-sm font-semibold transition-all shadow-sm shrink-0"
+              disabled={formSubmitting || !eventTypeName.trim()}
+            >
+              {formSubmitting ? "Adding..." : "Add Type"}
+            </button>
+          </form>
+
+          {/* Form 2: Add Category */}
+          <form onSubmit={handleAddCategory} className="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex flex-col sm:flex-row items-end gap-3">
+            <div className="flex-1 w-full">
+              <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">
+                Event Type
+              </label>
+              <select
+                value={categoryEventType}
+                onChange={(e) => setCategoryEventType(e.target.value)}
+                className="w-full px-4 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm text-slate-800 bg-white"
+                required
+              >
+                <option value="">Select event type</option>
+                {eventTypes.map((et) => (
+                  <option key={et._id || et.id} value={et._id || et.id}>
+                    {et.name || et.eventType || et.title}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="flex-1 w-full">
+              <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">
+                Category Name
+              </label>
+              <input
+                type="text"
+                value={categoryName}
+                onChange={(e) => setCategoryName(e.target.value)}
+                className="w-full px-4 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm placeholder-slate-400"
+                placeholder="e.g. Banquet, Catering"
+                required
+              />
+            </div>
+            <button
+              type="submit"
+              className="px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-sm font-semibold transition-all shadow-sm shrink-0 w-full sm:w-auto"
+              disabled={formSubmitting || !categoryName.trim() || !categoryEventType}
+            >
+              {formSubmitting ? "Adding..." : "Add Category"}
+            </button>
+          </form>
+        </div>
       </div>
 
       {/* Global Status/Message Banner */}
@@ -125,172 +191,70 @@ const EventTypes = () => {
         </div>
       )}
 
-      {/* Grid container */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-        
-        {/* Left Side: Create / Setup forms */}
-        <div className="lg:col-span-5 space-y-8">
-          
-          {/* Card 1: Add Event Type */}
-          <div className="bg-white rounded-2xl border border-slate-100 p-6 shadow-sm">
-            <div className="flex items-center gap-3 mb-5">
-              <div className="w-8 h-8 rounded-lg bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-600">
-                <svg className="w-4.5 h-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                </svg>
-              </div>
-              <h3 className="text-base font-bold text-slate-900 uppercase tracking-wider">
-                Create Event Type
-              </h3>
-            </div>
-            
-            <form onSubmit={handleAddEventType} className="space-y-4">
-              <div>
-                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
-                  Event Type Name
-                </label>
-                <div className="flex gap-2">
-                  <input
-                    type="text"
-                    value={eventTypeName}
-                    onChange={(e) => setEventTypeName(e.target.value)}
-                    className="flex-1 px-4 py-2.5 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm placeholder-slate-400"
-                    placeholder="e.g. Wedding, Birthday"
-                    required
-                  />
-                  <button
-                    type="submit"
-                    className="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-sm font-semibold transition-all shadow-sm hover:shadow active:scale-98 shrink-0 disabled:opacity-50"
-                    disabled={formSubmitting || !eventTypeName.trim()}
-                  >
-                    {formSubmitting ? "Adding..." : "Add"}
-                  </button>
-                </div>
-              </div>
-            </form>
-          </div>
-
-          {/* Card 2: Add Category */}
-          <div className="bg-white rounded-2xl border border-slate-100 p-6 shadow-sm">
-            <div className="flex items-center gap-3 mb-5">
-              <div className="w-8 h-8 rounded-lg bg-emerald-50 border border-emerald-100 flex items-center justify-center text-emerald-600">
-                <svg className="w-4.5 h-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h7" />
-                </svg>
-              </div>
-              <h3 className="text-base font-bold text-slate-900 uppercase tracking-wider">
-                Add Category
-              </h3>
-            </div>
-
-            <form onSubmit={handleAddCategory} className="space-y-4">
-              <div>
-                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
-                  Associated Event Type
-                </label>
-                <select
-                  value={categoryEventType}
-                  onChange={(e) => setCategoryEventType(e.target.value)}
-                  className="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm text-slate-800 bg-white"
-                  required
-                >
-                  <option value="">Select event type</option>
-                  {eventTypes.map((et) => (
-                    <option key={et._id || et.id} value={et._id || et.id}>
-                      {et.name || et.eventType || et.title}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
-                  Category Name
-                </label>
-                <input
-                  type="text"
-                  value={categoryName}
-                  onChange={(e) => setCategoryName(e.target.value)}
-                  className="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm placeholder-slate-400"
-                  placeholder="e.g. Outdoor, Indoor Banquet"
-                  required
-                />
-              </div>
-
-              <div className="pt-2">
-                <button
-                  type="submit"
-                  className="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-sm font-semibold transition-all shadow-sm hover:shadow active:scale-98 disabled:opacity-50"
-                  disabled={formSubmitting || !categoryName.trim() || !categoryEventType}
-                >
-                  {formSubmitting ? "Adding Category..." : "Add Category"}
-                </button>
-              </div>
-            </form>
-          </div>
-
-        </div>
-
-        {/* Right Side: Listing and Badges */}
-        <div className="lg:col-span-7 space-y-6">
-          <div className="bg-white rounded-2xl border border-slate-100 p-6 shadow-sm">
-            <div className="flex items-center justify-between mb-6 pb-4 border-b border-slate-100">
-              <h3 className="text-lg font-bold text-slate-900">
-                Registered Event Types & Categories ({eventTypes.length})
-              </h3>
-            </div>
-
-            {loading && eventTypes.length === 0 ? (
-              <div className="flex items-center justify-center py-12">
-                <div className="w-8 h-8 rounded-full border-4 border-slate-100 border-t-indigo-600 animate-spin"></div>
-              </div>
-            ) : eventTypes.length > 0 ? (
-              <div className="space-y-4 max-h-[70vh] overflow-y-auto pr-2">
-                {eventTypes.map((eventType) => {
+      {/* Downside Table */}
+      <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="min-w-full divide-y divide-slate-200">
+            <thead className="bg-slate-100">
+              <tr>
+                <th className="px-6 py-3 text-left text-xs font-bold text-slate-700 uppercase tracking-wider w-4/12">
+                  Event Type
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-bold text-slate-700 uppercase tracking-wider w-8/12">
+                  Assigned Categories
+                </th>
+              </tr>
+            </thead>
+            <tbody className="bg-white divide-y divide-slate-200">
+              {loading && eventTypes.length === 0 ? (
+                <tr>
+                  <td colSpan={2} className="px-6 py-10 text-center">
+                    <div className="flex flex-col items-center justify-center space-y-2">
+                      <div className="w-8 h-8 rounded-full border-4 border-slate-100 border-t-indigo-600 animate-spin"></div>
+                      <p className="text-xs font-medium text-slate-400">Loading data...</p>
+                    </div>
+                  </td>
+                </tr>
+              ) : eventTypes.length > 0 ? (
+                eventTypes.map((eventType) => {
                   const eventTypeCategories = getEventCategories(eventType._id || eventType.id)
                   
                   return (
-                    <div 
-                      key={eventType._id || eventType.id} 
-                      className="bg-slate-50/50 hover:bg-slate-50 border border-slate-100 rounded-2xl p-5 transition-all duration-150"
-                    >
-                      <div className="flex items-center justify-between">
-                        <h4 className="text-base font-bold text-indigo-600 flex items-center gap-2">
+                    <tr key={eventType._id || eventType.id} className="hover:bg-slate-50/70 transition-colors duration-150">
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <span className="text-sm font-bold text-indigo-600">
                           {eventType.eventType || eventType.name}
-                        </h4>
-                        <span className="text-[10px] font-bold text-slate-400 bg-slate-200/50 px-2 py-0.5 rounded">
-                          {eventTypeCategories.length} Categories
                         </span>
-                      </div>
-                      
-                      <div className="mt-4 pt-3 border-t border-slate-100/60">
+                      </td>
+                      <td className="px-6 py-4">
                         <div className="flex flex-wrap gap-2">
                           {eventTypeCategories.length > 0 ? (
                             eventTypeCategories.map((category) => (
                               <span 
                                 key={category._id || category.id} 
-                                className="inline-flex items-center px-3 py-1 bg-white border border-slate-200/60 text-slate-700 text-xs font-semibold rounded-lg shadow-xs hover:border-slate-350 transition-colors"
+                                className="inline-flex items-center px-2.5 py-0.5 bg-slate-50 border border-slate-200/60 text-slate-750 text-xs font-semibold rounded-lg"
                               >
                                 {category.category || category.name}
                               </span>
                             ))
                           ) : (
-                            <span className="text-xs text-slate-400 italic">No categories assigned to this event type yet.</span>
+                            <span className="text-xs text-slate-400 italic">No categories assigned yet.</span>
                           )}
                         </div>
-                      </div>
-                    </div>
+                      </td>
+                    </tr>
                   )
-                })}
-              </div>
-            ) : (
-              <div className="text-center py-12 text-slate-400 font-medium">
-                No event classifications found.
-              </div>
-            )}
-          </div>
+                })
+              ) : (
+                <tr>
+                  <td colSpan={2} className="px-6 py-8 text-center text-slate-400 font-medium text-xs">
+                    No event classifications found.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
         </div>
-
       </div>
     </div>
   )

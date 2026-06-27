@@ -63,7 +63,7 @@ const AdditionalServices = () => {
             setServices(formatted)
             return
           }
-        } catch (e) {}
+        } catch (e) { }
         console.error("Add service error:", error)
         alert("Failed to add service. Please try again.")
       }
@@ -102,7 +102,7 @@ const AdditionalServices = () => {
           setShowDeleteId(null)
           return
         }
-      } catch (e) {}
+      } catch (e) { }
       console.error("Delete service error:", error)
       alert("Failed to delete service.")
     }
@@ -144,191 +144,149 @@ const AdditionalServices = () => {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold text-gray-900">Additional Services</h1>
-      </div>
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+      {/* Header Info and Add Service Inline Form */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-6 border-b border-slate-200">
+        <div>
+          <h1 className="text-2xl font-bold text-slate-950 tracking-tight">Additional Services</h1>
+          <p className="text-xs text-slate-500 mt-0.5">Manage supplementary service offerings available on the platform.</p>
+        </div>
 
-      {/* Add Service Form */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">Add Additional Service</h2>
-        <form onSubmit={handleAddService} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Service Name</label>
-            <input
-              type="text"
-              value={serviceName}
-              onChange={(e) => setServiceName(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="Enter additional service name..."
-              required
-            />
-          </div>
+        {/* Input field and Add Service button inline */}
+        <form onSubmit={handleAddService} className="flex-1 max-w-md flex items-center gap-3">
+          <input
+            type="text"
+            value={serviceName}
+            onChange={(e) => setServiceName(e.target.value)}
+            className="flex-1 min-w-[200px] px-4 py-2.5 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm placeholder-slate-400"
+            placeholder="Enter additional service name..."
+            required
+          />
           <button
             type="submit"
-            className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors duration-200"
+            className="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-sm font-semibold transition-all shadow-sm hover:shadow shrink-0"
+            disabled={!serviceName.trim()}
           >
             Add Service
           </button>
         </form>
       </div>
 
-      {/* Services List */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-        <div className="px-6 py-4 border-b border-gray-200">
-          <h2 className="text-lg font-semibold text-gray-900">All Additional Services</h2>
-        </div>
-
+      {/* Downside Services Table Card */}
+      <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
+          <table className="min-w-full divide-y divide-slate-200">
+            <thead className="bg-slate-100">
               <tr>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-bold text-slate-700 uppercase tracking-wider w-1/12">
                   S. No.
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-bold text-slate-700 uppercase tracking-wider w-6/12">
                   Service Name
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Created Date
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-bold text-slate-700 uppercase tracking-wider w-2/12">
                   Status
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-right text-xs font-bold text-slate-700 uppercase tracking-wider w-1/12">
                   Actions
                 </th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
+            <tbody className="bg-white divide-y divide-slate-200">
               {services.map((service, idx) => (
-                <tr key={service.id} className="hover:bg-gray-50">
-                  <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500">{idx + 1}</td>
+                <tr key={service.id} className="hover:bg-slate-50/70 transition-colors duration-150">
+                  <td className="px-6 py-4 whitespace-nowrap text-xs text-slate-500 font-semibold">{idx + 1}</td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     {editId === service.id ? (
                       <input
                         type="text"
                         value={editName}
                         onChange={handleEditChange}
-                        className="px-2 py-1 border border-gray-300 rounded"
+                        className="px-3 py-1.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-xs font-medium"
                         autoFocus
                       />
                     ) : (
-                      <div className="text-sm font-medium text-gray-900">{service.name}</div>
+                      <div className="text-xs font-semibold text-slate-900">{service.name}</div>
                     )}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{service.createdAt}</td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <span
-                      className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(service.status)}`}
+                      className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-bold bg-green-50 text-green-700 border border-green-200/60`}
                     >
+                      <span className="w-1 h-1 rounded-full bg-green-500"></span>
                       {service.status}
                     </span>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium relative">
-                    <div className="relative inline-block text-left">
-                      <button
-                        type="button"
-                        className="inline-flex justify-center w-8 h-8 rounded-full hover:bg-gray-200 focus:outline-none"
-                        onClick={() => setOpenMenuId(openMenuId === service.id ? null : service.id)}
-                        aria-haspopup="true"
-                        aria-expanded={openMenuId === service.id}
-                      >
-                        <svg className="w-5 h-5 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
-                          <circle cx="10" cy="4" r="1.5" />
-                          <circle cx="10" cy="10" r="1.5" />
-                          <circle cx="10" cy="16" r="1.5" />
-                        </svg>
-                      </button>
-                      {openMenuId === service.id && (
-                        <div className="origin-top-right absolute right-0 mt-2 w-32 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-10">
-                          <div className="py-1">
-                            <button
-                              onClick={() => {
-                                setEditId(service.id);
-                                setEditName(service.name);
-                                setShowEditModal(true);
-                                setOpenMenuId(null);
-                              }}
-                              className="block w-full text-left px-4 py-2 text-sm text-green-600 hover:bg-gray-100"
-                            >
-                              Edit
-                            </button>
-                            <button
-                              onClick={() => {
-                                setShowDeleteId(service.id);
-                                setOpenMenuId(null);
-                              }}
-                              className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
-                            >
-                              Delete
-                            </button>
-                            <button
-                              onClick={() => setOpenMenuId(null)}
-                              className="block w-full text-left px-4 py-2 text-sm text-gray-600 hover:bg-gray-100"
-                            >
-                              Cancel
-                            </button>
-                          </div>
-                        </div>
-                      )}
-                    </div>
+                  <td className="px-6 py-4 whitespace-nowrap text-right text-xs font-medium space-x-3">
+                    {editId === service.id ? (
+                      <>
+                        <button
+                          onClick={() => handleEditSave(service.id)}
+                          className="text-green-600 hover:text-green-800 transition-colors font-semibold"
+                        >
+                          Save
+                        </button>
+                        <button
+                          onClick={handleEditCancel}
+                          className="text-slate-500 hover:text-slate-700 transition-colors font-semibold"
+                        >
+                          Cancel
+                        </button>
+                      </>
+                    ) : (
+                      <>
+                        <button
+                          onClick={() => {
+                            setEditId(service.id);
+                            setEditName(service.name);
+                          }}
+                          className="text-indigo-600 hover:text-indigo-800 transition-colors font-semibold"
+                        >
+                          Edit
+                        </button>
+                        <button
+                          onClick={() => setShowDeleteId(service.id)}
+                          className="text-rose-600 hover:text-rose-800 transition-colors font-semibold"
+                        >
+                          Delete
+                        </button>
+                      </>
+                    )}
                   </td>
                 </tr>
               ))}
+              {services.length === 0 && (
+                <tr>
+                  <td colSpan={5} className="px-6 py-8 text-center text-slate-400 font-medium text-xs">
+                    No additional services found. Add one using the input above.
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>
       </div>
 
-      {/* Edit Modal */}
-      {showEditModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-30">
-          <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-sm">
-            <h3 className="text-lg font-semibold mb-4">Edit Service Name</h3>
-            <input
-              type="text"
-              value={editName}
-              onChange={handleEditChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded mb-4"
-              autoFocus
-            />
-            <div className="flex justify-end space-x-2">
-              <button
-                onClick={() => handleEditSave(editId)}
-                className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
-              >
-                Save
-              </button>
-              <button
-                onClick={handleEditCancel}
-                className="px-4 py-2 bg-gray-300 text-gray-800 rounded hover:bg-gray-400"
-              >
-                Cancel
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
       {/* Delete Confirmation Modal */}
       {showDeleteId && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-30">
-          <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-sm">
-            <h3 className="text-lg font-semibold mb-4">Delete Service</h3>
-            <p className="mb-4">Are you sure you want to delete this service?</p>
-            <div className="flex justify-end space-x-2">
-              <button
-                onClick={() => handleDelete(showDeleteId)}
-                className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
-              >
-                Delete
-              </button>
+        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center z-50 animate-fade-in p-4">
+          <div className="bg-white rounded-2xl p-6 w-full max-w-sm shadow-2xl border border-slate-100 animate-scale-up">
+            <h3 className="text-xl font-bold text-slate-950 mb-2">Delete Service</h3>
+            <p className="text-sm text-slate-500 mb-6 leading-relaxed">
+              Are you sure you want to delete this additional service? This action cannot be undone.
+            </p>
+            <div className="flex justify-end gap-3">
               <button
                 onClick={() => setShowDeleteId(null)}
-                className="px-4 py-2 bg-gray-300 text-gray-800 rounded hover:bg-gray-400"
+                className="px-4 py-2.5 text-sm font-semibold text-slate-650 hover:bg-slate-50 rounded-xl transition-all"
               >
                 Cancel
+              </button>
+              <button
+                onClick={() => handleDelete(showDeleteId)}
+                className="px-5 py-2.5 rounded-xl text-sm font-semibold text-white bg-rose-600 hover:bg-rose-700 transition-all shadow-sm hover:shadow"
+              >
+                Delete
               </button>
             </div>
           </div>
