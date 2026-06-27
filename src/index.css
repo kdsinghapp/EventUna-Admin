@@ -106,17 +106,17 @@ thead th {
   background-color: #f8fafc !important;
   border-bottom: 1.5px solid #edf2f7 !important;
   color: #64748b !important;
-  font-size: 0.75rem !important;
+  font-size: 0.725rem !important;
   font-weight: 700 !important;
   letter-spacing: 0.05em !important;
-  padding: 1rem 1.5rem !important;
+  padding: 0.625rem 1rem !important;
   text-transform: uppercase !important;
 }
 
 tbody td {
   border-bottom: 1px solid #edf2f7 !important;
-  padding: 1rem 1.5rem !important;
-  font-size: 0.875rem !important;
+  padding: 0.625rem 1rem !important;
+  font-size: 0.825rem !important;
   color: #334155 !important;
 }
 

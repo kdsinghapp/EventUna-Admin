@@ -31,7 +31,12 @@ const Sidebar = ({ activeSection, setActiveSection, isOpen, setIsOpen, onLogout 
             ? "bg-indigo-600/15 text-indigo-400 border-l-4 border-indigo-500 font-medium"
             : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/40"
             }`}
-          onClick={() => setActiveSection(item.id)}
+          onClick={() => {
+            setActiveSection(item.id);
+            if (!hasChildren) {
+              setIsOpen(false);
+            }
+          }}
         >
           <div className="flex items-center space-x-3">
             {item.icon && <span className={`text-lg ${isActive ? "text-indigo-400" : "text-slate-500"}`}>{item.icon}</span>}
@@ -88,7 +93,10 @@ const Sidebar = ({ activeSection, setActiveSection, isOpen, setIsOpen, onLogout 
                 ? "bg-indigo-600/15 text-indigo-400 border-l-4 border-indigo-500 font-medium"
                 : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/40"
                 }`}
-              onClick={() => setActiveSection("dashboard")}
+              onClick={() => {
+                setActiveSection("dashboard");
+                setIsOpen(false);
+              }}
             >
               <span className={`text-lg ${activeSection === "dashboard" ? "text-indigo-400" : "text-slate-500"}`}><FaChartBar /></span>
               <span className="text-sm font-medium tracking-wide">Dashboard</span>
