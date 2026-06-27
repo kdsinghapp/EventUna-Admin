@@ -1,6 +1,6 @@
 "use client"
 
-import { FaBars, FaBell, FaUserCircle } from "react-icons/fa"
+import { FaBars, FaBell } from "react-icons/fa"
 
 const Header = ({ toggleSidebar, onLogout }) => {
   return (

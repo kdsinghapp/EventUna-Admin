@@ -10,8 +10,6 @@ const AdditionalServices = () => {
   const [editId, setEditId] = useState(null)
   const [editName, setEditName] = useState("")
   const [showDeleteId, setShowDeleteId] = useState(null)
-  const [showEditModal, setShowEditModal] = useState(false)
-  const [openMenuId, setOpenMenuId] = useState(null)
 
   useEffect(() => {
     const fetchServices = async () => {
@@ -127,7 +125,6 @@ const AdditionalServices = () => {
       setServices((prev) => prev.map((s) => s.id === id ? { ...s, name: editName } : s))
       setEditId(null)
       setEditName("")
-      setShowEditModal(false)
     } catch (error) {
       alert("Failed to update service name.")
     }
@@ -136,11 +133,6 @@ const AdditionalServices = () => {
   const handleEditCancel = () => {
     setEditId(null)
     setEditName("")
-    setShowEditModal(false)
-  }
-
-  const getStatusColor = (status) => {
-    return status === "active" ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
   }
 
   return (

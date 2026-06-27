@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react"
-import { FaStore, FaCog, FaUsers, FaClipboardList, FaCheckCircle, FaExclamationCircle } from "react-icons/fa"
+import { FaStore, FaCog, FaUsers, FaCheckCircle, FaExclamationCircle } from "react-icons/fa"
 
 const Dashboard = () => {
   const [stats, setStats] = useState([
