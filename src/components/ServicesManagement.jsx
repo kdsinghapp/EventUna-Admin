@@ -51,7 +51,7 @@ const ServicesManagement = ({ activeTab = "add" }) => {
               key={t.id}
               onClick={() => setTab(t.id)}
               className={`py-3.5 px-1 border-b-2 font-bold text-xs uppercase tracking-wider flex items-center gap-2 whitespace-nowrap transition-all duration-200 ${tab === t.id
-                  ? "border-indigo-600 text-indigo-650"
+                  ? "border-indigo-600 text-indigo-600"
                   : "border-transparent text-slate-400 hover:text-slate-600 hover:border-slate-300"
                 }`}
             >
@@ -68,7 +68,7 @@ const ServicesManagement = ({ activeTab = "add" }) => {
       {tab === "add" && (
         <div className="bg-white rounded-2xl border border-slate-100 p-6 shadow-sm max-w-xl animate-fade-in">
           <div className="flex items-center gap-3 mb-6">
-            <div className="w-8 h-8 rounded-lg bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-650">
+            <div className="w-8 h-8 rounded-lg bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-600">
               <svg className="w-4.5 h-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
               </svg>
@@ -91,7 +91,7 @@ const ServicesManagement = ({ activeTab = "add" }) => {
 
             <button
               type="submit"
-              className="px-6 py-2.5 bg-indigo-650 hover:bg-indigo-700 text-white rounded-xl text-sm font-semibold transition-all shadow-sm hover:shadow active:scale-98"
+              className="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-sm font-semibold transition-all shadow-sm hover:shadow active:scale-98"
             >
               Add Service
             </button>
@@ -140,7 +140,7 @@ const ServicesManagement = ({ activeTab = "add" }) => {
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-4">
-                      <button className="text-indigo-650 hover:text-indigo-850 transition-colors">Edit</button>
+                      <button className="text-indigo-600 hover:text-indigo-800 transition-colors">Edit</button>
                       <button
                         onClick={() => handleDeleteService(service.id)}
                         className="text-rose-600 hover:text-rose-800 transition-colors"
