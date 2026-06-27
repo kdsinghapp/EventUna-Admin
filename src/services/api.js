@@ -148,10 +148,27 @@ class ApiService {
   }
 
   // Place Preferences
-  async addPlacePreference(preferenceData) {
-    return this.request("/place-preference", {
+  async addPlacePreference(preference) {
+    return this.request("/admin/place-preference", {
       method: "POST",
-      body: JSON.stringify(preferenceData),
+      body: JSON.stringify({ preference }),
+    })
+  }
+
+  async getPlacePreferences() {
+    return this.request("/admin/place-preference")
+  }
+
+  async updatePlacePreference(id, preference) {
+    return this.request("/admin/place-preference/update", {
+      method: "POST",
+      body: JSON.stringify({ id, preference }),
+    })
+  }
+
+  async deletePlacePreference(id) {
+    return this.request(`/admin/place-preference/${id}`, {
+      method: "DELETE",
     })
   }
 
