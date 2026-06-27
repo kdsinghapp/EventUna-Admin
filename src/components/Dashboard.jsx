@@ -6,7 +6,7 @@ const Dashboard = () => {
     { title: "Total Merchants", value: "-", change: "+0%", trend: "up", color: "from-indigo-500 to-indigo-600", icon: <FaStore /> },
     { title: "Active Services", value: "89", change: "+5%", trend: "up", color: "from-emerald-500 to-emerald-600", icon: <FaCog /> },
     { title: "Total Users", value: "2,341", change: "+18%", trend: "up", color: "from-cyan-500 to-cyan-600", icon: <FaUsers /> },
-    { title: "Pending Approvals", value: "23", change: "-3%", trend: "down", color: "from-amber-500 to-amber-650", icon: <FaClipboardList /> },
+
   ])
 
   useEffect(() => {
@@ -95,8 +95,8 @@ const Dashboard = () => {
                 </div>
                 <span
                   className={`px-3 py-1 rounded-lg text-xs font-bold uppercase tracking-wider ${item.status === "approved"
-                      ? "bg-emerald-50 text-emerald-700 border border-emerald-100"
-                      : "bg-amber-50 text-amber-700 border border-amber-100"
+                    ? "bg-emerald-50 text-emerald-700 border border-emerald-100"
+                    : "bg-amber-50 text-amber-700 border border-amber-100"
                     }`}
                 >
                   {item.status}
