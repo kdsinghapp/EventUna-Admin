@@ -47,7 +47,7 @@ const NotesManagement = () => {
       setFormSubmitting(true)
       setError(null)
       const response = await apiService.addNote({ notes: note })
-      if (response.status) {
+      if (response) {
         setNote("")
         fetchNotes()
       } else {
@@ -61,10 +61,21 @@ const NotesManagement = () => {
     }
   }
 
-  const handleDeleteLocal = (id) => {
-    // Delete note locally since delete endpoint is not available on API
-    setNotes((prev) => prev.filter(noteItem => noteItem.id !== id))
-    setNoteToDelete(null)
+  const handleDeleteLocal = async (id) => {
+    try {
+      setError(null)
+      const response = await apiService.deleteNote(id)
+      if (response && response.status !== false) {
+        fetchNotes()
+      } else {
+        setError("Failed to delete note.")
+      }
+    } catch (err) {
+      console.error("Error deleting note:", err)
+      setError("Failed to delete note.")
+    } finally {
+      setNoteToDelete(null)
+    }
   }
 
   const handleStartEdit = (noteItem) => {
@@ -72,14 +83,26 @@ const NotesManagement = () => {
     setEditContent(noteItem.content)
   }
 
-  const handleUpdateNote = (e) => {
+  const handleUpdateNote = async (e) => {
     e.preventDefault()
     if (!editContent.trim()) return
-    setNotes((prev) =>
-      prev.map((n) => (n.id === noteToEdit.id ? { ...n, content: editContent } : n))
-    )
-    setNoteToEdit(null)
-    setEditContent("")
+    try {
+      setFormSubmitting(true)
+      setError(null)
+      const response = await apiService.updateNote(noteToEdit.id, editContent)
+      if (response) {
+        setNoteToEdit(null)
+        setEditContent("")
+        fetchNotes()
+      } else {
+        setError("Failed to update note.")
+      }
+    } catch (err) {
+      console.error("Error updating note:", err)
+      setError("Failed to update note.")
+    } finally {
+      setFormSubmitting(false)
+    }
   }
 
   return (

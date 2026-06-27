@@ -109,6 +109,19 @@ class ApiService {
     return this.request("/event/notes")
   }
 
+  async deleteNote(noteId) {
+    return this.request(`/admin/delete-notes?id=${noteId}`, {
+      method: "DELETE",
+    })
+  }
+
+  async updateNote(noteId, noteContent) {
+    return this.request("/admin/update-notes", {
+      method: "POST",
+      body: JSON.stringify({ id: noteId, notes: noteContent }),
+    })
+  }
+
   // Additional Services
   async addAdditionalService(serviceData) {
     return this.request("/admin/additional-services", {
