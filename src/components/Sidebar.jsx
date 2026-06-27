@@ -14,13 +14,10 @@ const Sidebar = ({ activeSection, setActiveSection, isOpen, setIsOpen, onLogout 
       ],
     },
     { id: "add-event-type", label: "Add Event Type & Category", color: "text-emerald-400", icon: <FaPlus /> },
-    { id: "get-all-services", label: "Get All Services", color: "text-emerald-400", icon: <FaClipboardList /> },
-    { id: "get-sub-services", label: "Get Sub Services", color: "text-emerald-400", icon: <FaLayerGroup /> },
     { id: "add-notes", label: "Add Notes", color: "text-amber-400", icon: <FaStickyNote /> },
     { id: "all-users", label: "All Users", color: "text-emerald-400", icon: <FaUsers /> },
     { id: "additional-services", label: "Additional Services", color: "text-amber-400", icon: <FaPlus /> },
-    { id: "place-preference", label: "Place Preference", color: "text-amber-400", icon: <FaMapMarkerAlt /> },
-    { id: "subservices", label: "Subservices", color: "text-amber-400", icon: <FaLayerGroup /> },
+    { id: "place-preference", label: "Place Preference", color: "text-amber-400", icon: <FaMapMarkerAlt /> }
   ]
 
   const renderMenuItem = (item, level = 0) => {
@@ -31,8 +28,8 @@ const Sidebar = ({ activeSection, setActiveSection, isOpen, setIsOpen, onLogout 
       <div key={item.id} className={`${level > 0 ? "ml-4" : ""}`}>
         <div
           className={`flex items-center justify-between px-3.5 py-2.5 rounded-xl cursor-pointer transition-all duration-200 ${isActive
-              ? "bg-indigo-600/15 text-indigo-400 border-l-4 border-indigo-500 font-medium"
-              : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/40"
+            ? "bg-indigo-600/15 text-indigo-400 border-l-4 border-indigo-500 font-medium"
+            : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/40"
             }`}
           onClick={() => setActiveSection(item.id)}
         >
@@ -88,8 +85,8 @@ const Sidebar = ({ activeSection, setActiveSection, isOpen, setIsOpen, onLogout 
           <nav className="flex-1 overflow-y-auto p-4 space-y-1.5 custom-scrollbar">
             <div
               className={`flex items-center space-x-3 px-3.5 py-2.5 rounded-xl cursor-pointer transition-all duration-200 ${activeSection === "dashboard"
-                  ? "bg-indigo-600/15 text-indigo-400 border-l-4 border-indigo-500 font-medium"
-                  : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/40"
+                ? "bg-indigo-600/15 text-indigo-400 border-l-4 border-indigo-500 font-medium"
+                : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/40"
                 }`}
               onClick={() => setActiveSection("dashboard")}
             >

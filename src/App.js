@@ -5,12 +5,10 @@ import Sidebar from "./components/Sidebar"
 import Header from "./components/Header"
 import Dashboard from "./components/Dashboard"
 import MerchantManagement from "./components/MerchantManagement"
-import ServicesManagement from "./components/ServicesManagement"
 import UserManagement from "./components/UserManagement"
 import NotesManagement from "./components/NotesManagement"
 import AdditionalServices from "./components/AdditionalServices"
 import PlacePreferences from "./components/PlacePreferences"
-import SubServices from "./components/SubServices"
 import Login from "./components/Login"
 import EventTypes from "./components/EventTypes"
 
@@ -28,12 +26,6 @@ function App() {
         return <Dashboard />
       case "all-merchants":
         return <MerchantManagement />
-      case "services":
-        return <ServicesManagement />
-      case "get-all-services":
-        return <ServicesManagement activeTab="view" />
-      case "get-sub-services":
-        return <SubServices />
       case "all-users":
         return <UserManagement />
       case "add-notes":
@@ -42,8 +34,6 @@ function App() {
         return <AdditionalServices />
       case "place-preference":
         return <PlacePreferences />
-      case "subservices":
-        return <SubServices activeTab="add" />
       case "add-event-type":
         return <EventTypes />
       case "add-event-category":

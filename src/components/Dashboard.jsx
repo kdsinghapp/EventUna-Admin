@@ -3,9 +3,9 @@ import { FaStore, FaCog, FaUsers, FaClipboardList, FaCheckCircle, FaExclamationC
 
 const Dashboard = () => {
   const [stats, setStats] = useState([
-    { title: "Total Merchants", value: "-", change: "+0%", trend: "up", color: "from-indigo-500 to-indigo-600", icon: <FaStore /> },
-    { title: "Active Services", value: "89", change: "+5%", trend: "up", color: "from-emerald-500 to-emerald-600", icon: <FaCog /> },
-    { title: "Total Users", value: "2,341", change: "+18%", trend: "up", color: "from-cyan-500 to-cyan-600", icon: <FaUsers /> },
+    { title: "Total Merchants", value: "-", trend: "up", color: "from-indigo-500 to-indigo-600", icon: <FaStore /> },
+    { title: "Active Services", value: "89", trend: "up", color: "from-emerald-500 to-emerald-600", icon: <FaCog /> },
+    { title: "Total Users", value: "2,341", trend: "up", color: "from-cyan-500 to-cyan-600", icon: <FaUsers /> },
 
   ])
 
@@ -52,7 +52,6 @@ const Dashboard = () => {
                   <span className={`font-semibold ${stat.trend === "up" ? "text-emerald-600" : "text-amber-600"}`}>
                     {stat.change}
                   </span>
-                  <span className="text-slate-400">from last month</span>
                 </p>
               </div>
               <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${stat.color} flex items-center justify-center text-white shadow-md shadow-indigo-500/10`}>
