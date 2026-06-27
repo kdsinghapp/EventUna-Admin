@@ -10,6 +10,8 @@ const NotesManagement = () => {
   const [formSubmitting, setFormSubmitting] = useState(false)
   const [error, setError] = useState(null)
   const [noteToDelete, setNoteToDelete] = useState(null)
+  const [noteToEdit, setNoteToEdit] = useState(null)
+  const [editContent, setEditContent] = useState("")
 
   const fetchNotes = async () => {
     try {
@@ -63,6 +65,21 @@ const NotesManagement = () => {
     // Delete note locally since delete endpoint is not available on API
     setNotes((prev) => prev.filter(noteItem => noteItem.id !== id))
     setNoteToDelete(null)
+  }
+
+  const handleStartEdit = (noteItem) => {
+    setNoteToEdit(noteItem)
+    setEditContent(noteItem.content)
+  }
+
+  const handleUpdateNote = (e) => {
+    e.preventDefault()
+    if (!editContent.trim()) return
+    setNotes((prev) =>
+      prev.map((n) => (n.id === noteToEdit.id ? { ...n, content: editContent } : n))
+    )
+    setNoteToEdit(null)
+    setEditContent("")
   }
 
   return (
@@ -124,6 +141,15 @@ const NotesManagement = () => {
 
                       {/* Small floating actions */}
                       <div className="flex items-center gap-2 shrink-0">
+                        <button
+                          onClick={() => handleStartEdit(noteItem)}
+                          className="p-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-600 hover:text-indigo-700 rounded-lg transition-colors border border-indigo-100"
+                          title="Edit Note"
+                        >
+                          <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                          </svg>
+                        </button>
                         <button
                           onClick={() => setNoteToDelete(noteItem.id)}
                           className="p-1.5 bg-rose-50 hover:bg-rose-100 text-rose-600 hover:text-rose-700 rounded-lg transition-colors border border-rose-100"
@@ -198,7 +224,7 @@ const NotesManagement = () => {
             <div className="flex justify-end gap-3">
               <button
                 onClick={() => setNoteToDelete(null)}
-                className="px-4 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50 rounded-xl transition-all"
+                className="px-4 py-2.5 text-sm font-semibold text-slate-650 hover:bg-slate-50 rounded-xl transition-all"
               >
                 Cancel
               </button>
@@ -209,6 +235,46 @@ const NotesManagement = () => {
                 Delete Note
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Edit Modal */}
+      {noteToEdit && (
+        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center z-50 animate-fade-in p-4">
+          <div className="bg-white rounded-2xl p-6 w-full max-w-md shadow-2xl border border-slate-100 animate-scale-up">
+            <h3 className="text-xl font-bold text-slate-950 mb-4">Edit Note</h3>
+            <form onSubmit={handleUpdateNote} className="space-y-4">
+              <div>
+                <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Note Content</label>
+                <textarea
+                  value={editContent}
+                  onChange={(e) => setEditContent(e.target.value)}
+                  className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm resize-none leading-relaxed"
+                  rows="5"
+                  required
+                />
+              </div>
+
+              <div className="flex justify-end gap-3 pt-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setNoteToEdit(null)
+                    setEditContent("")
+                  }}
+                  className="px-4 py-2.5 text-sm font-semibold text-slate-650 hover:bg-slate-50 rounded-xl transition-all"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-5 py-2.5 rounded-xl text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 transition-all shadow-sm hover:shadow"
+                >
+                  Save Changes
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}

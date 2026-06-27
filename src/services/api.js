@@ -99,7 +99,7 @@ class ApiService {
 
   // Notes Management
   async addNote(noteData) {
-    return this.request("/add-notes", {
+    return this.request("/admin/add-notes", {
       method: "POST",
       body: JSON.stringify(noteData),
     })
