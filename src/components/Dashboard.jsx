@@ -256,8 +256,7 @@ const Dashboard = ({ setActiveSection }) => {
           <div>
             <div className="flex items-center justify-between mb-6">
               <div>
-                <h3 className="text-lg font-bold text-slate-900">Service Category Split</h3>
-                <p className="text-xs text-slate-400 mt-0.5">Top performing event types.</p>
+                <h3 className="text-lg font-bold text-slate-900">Service Category</h3>
               </div>
               <FaChartLine className="text-indigo-500" />
             </div>
