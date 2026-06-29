@@ -31,13 +31,20 @@ const Login = ({ onLogin }) => {
     let cols = Math.floor(width / cellSize)
     let rows = Math.floor(height / cellSize)
 
+    function createSnakeBody(startX, startY, length, direction) {
+      const body = []
+      for (let i = 0; i < length; i++) {
+        body.push({
+          x: startX - direction.x * i,
+          y: startY - direction.y * i
+        })
+      }
+      return body
+    }
+
     let snakes = [
       {
-        body: [
-          { x: Math.floor(cols / 4), y: Math.floor(rows / 2) },
-          { x: Math.floor(cols / 4) - 1, y: Math.floor(rows / 2) },
-          { x: Math.floor(cols / 4) - 2, y: Math.floor(rows / 2) },
-        ],
+        body: createSnakeBody(Math.floor(cols / 4), Math.floor(rows / 2), 12, { x: 1, y: 0 }),
         dir: { x: 1, y: 0 },
         food: { x: Math.floor(cols / 2), y: Math.floor(rows / 2) },
         color: "#7bb23c", // Green snake
@@ -46,11 +53,7 @@ const Login = ({ onLogin }) => {
         eyeColor: "#1e70b8"
       },
       {
-        body: [
-          { x: Math.floor(cols / 2), y: Math.floor(rows / 4) },
-          { x: Math.floor(cols / 2) - 1, y: Math.floor(rows / 4) },
-          { x: Math.floor(cols / 2) - 2, y: Math.floor(rows / 4) },
-        ],
+        body: createSnakeBody(Math.floor(cols / 2), Math.floor(rows / 4), 12, { x: 0, y: 1 }),
         dir: { x: 0, y: 1 },
         food: { x: Math.floor(cols / 3), y: Math.floor(rows * 2/3) },
         color: "#f97316", // Orange snake
@@ -59,11 +62,7 @@ const Login = ({ onLogin }) => {
         eyeColor: "#10b981"
       },
       {
-        body: [
-          { x: Math.floor(cols * 3/4), y: Math.floor(rows * 3/4) },
-          { x: Math.floor(cols * 3/4) - 1, y: Math.floor(rows * 3/4) },
-          { x: Math.floor(cols * 3/4) - 2, y: Math.floor(rows * 3/4) },
-        ],
+        body: createSnakeBody(Math.floor(cols * 3/4), Math.floor(rows * 3/4), 12, { x: -1, y: 0 }),
         dir: { x: -1, y: 0 },
         food: { x: Math.floor(cols * 2/3), y: Math.floor(rows / 3) },
         color: "#38bdf8", // Blue snake
@@ -73,11 +72,61 @@ const Login = ({ onLogin }) => {
       }
     ]
 
+    let particles = []
+    let cracks = []
+    let fires = []
+
     function getRandomFoodPos() {
       return {
         x: Math.floor(Math.random() * (cols - 4)) + 2,
         y: Math.floor(Math.random() * (rows - 4)) + 2,
       }
+    }
+
+    function spawnExplosion(x, y, color) {
+      for (let i = 0; i < 45; i++) {
+        const angle = Math.random() * Math.PI * 2
+        const speed = 3 + Math.random() * 8
+        particles.push({
+          x,
+          y,
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed,
+          color,
+          alpha: 1,
+          size: 2 + Math.random() * 4
+        })
+      }
+    }
+
+    function generateCracks(startX, startY) {
+      const lines = []
+      const numMainBranches = 8 + Math.floor(Math.random() * 6)
+      
+      for (let i = 0; i < numMainBranches; i++) {
+        const angle = (i / numMainBranches) * Math.PI * 2 + (Math.random() - 0.5) * 0.4
+        let curX = startX
+        let curY = startY
+        let length = 80 + Math.random() * 180
+        
+        const endX = startX + Math.cos(angle) * length
+        const endY = startY + Math.sin(angle) * length
+        lines.push({ x1: startX, y1: startY, x2: endX, y2: endY, width: 2.5 + Math.random() * 2 })
+        
+        // Add tiny lateral sub-branches
+        if (Math.random() > 0.3) {
+          const subAngle = angle + (Math.random() - 0.5) * 1.2
+          const subLength = length * 0.5
+          lines.push({
+            x1: endX,
+            y1: endY,
+            x2: endX + Math.cos(subAngle) * subLength,
+            y2: endY + Math.sin(subAngle) * subLength,
+            width: 1
+          })
+        }
+      }
+      return { lines, age: 0, maxAge: 160 } // stays for ~3.5 seconds
     }
 
     let lastTime = 0
@@ -86,9 +135,8 @@ const Login = ({ onLogin }) => {
     const loop = (time) => {
       animationFrameId = requestAnimationFrame(loop)
 
-      if (time - lastTime < speed) return
-      lastTime = time
-
+      // Continuous particle & crack updates outside the frame rate limiter so they anim smoothly
+      // Clear canvas every animation frame for fluid rendering
       cols = Math.floor(width / cellSize)
       rows = Math.floor(height / cellSize)
       if (cols === 0 || rows === 0) return
@@ -96,55 +144,153 @@ const Login = ({ onLogin }) => {
       ctx.clearRect(0, 0, width, height)
       const timeMs = Date.now()
 
-      snakes.forEach((s) => {
-        const head = s.body[0]
-        let nextDir = { ...s.dir }
-        const diffX = s.food.x - head.x
-        const diffY = s.food.y - head.y
-
-        const options = []
-        if (diffX > 0 && s.dir.x !== -1) options.push({ x: 1, y: 0 })
-        if (diffX < 0 && s.dir.x !== 1) options.push({ x: -1, y: 0 })
-        if (diffY > 0 && s.dir.y !== -1) options.push({ x: 0, y: 1 })
-        if (diffY < 0 && s.dir.y !== 1) options.push({ x: 0, y: -1 })
-
-        const allDirs = [
-          { x: 1, y: 0 },
-          { x: -1, y: 0 },
-          { x: 0, y: 1 },
-          { x: 0, y: -1 },
-        ]
-
-        const safeOptions = [...options, ...allDirs].filter((d) => {
-          if (d.x === -s.dir.x && d.y === -s.dir.y) return false
-          const newX = (head.x + d.x + cols) % cols
-          const newY = (head.y + d.y + rows) % rows
-          // Avoid colliding with its own body
-          return !s.body.some((segment) => segment.x === newX && segment.y === newY)
-        })
-
-        if (safeOptions.length > 0) {
-          const targetOption = safeOptions.find(d => {
-            return (diffX > 0 && d.x === 1) || (diffX < 0 && d.x === -1) || (diffY > 0 && d.y === 1) || (diffY < 0 && d.y === -1)
+      // 1. Spawning active fire flames
+      fires.forEach((f) => {
+        f.age++
+        // Spawn 2-3 rising flame particles per frame
+        for (let i = 0; i < 2; i++) {
+          particles.push({
+            x: f.x + (Math.random() - 0.5) * 20,
+            y: f.y + (Math.random() - 0.5) * 15,
+            vx: (Math.random() - 0.5) * 1.5,
+            vy: -1.2 - Math.random() * 2,
+            // HSL Orange, yellow, red spectrum colors
+            color: `hsl(${12 + Math.random() * 32}, 100%, ${50 + Math.random() * 20}%)`,
+            alpha: 1,
+            size: 10 + Math.random() * 12,
+            isFlame: true,
+            decay: 0.012 + Math.random() * 0.015
           })
-          nextDir = targetOption || safeOptions[Math.floor(Math.random() * safeOptions.length)]
         }
+      })
+      fires = fires.filter((f) => f.age < f.maxAge)
 
-        s.dir = nextDir
+      // 2. Drawing background crack lines
+      cracks.forEach((c) => {
+        c.age++
+        const alpha = Math.max(0, 1 - c.age / c.maxAge)
+        ctx.save()
+        ctx.strokeStyle = `rgba(255, 255, 255, ${alpha * 0.35})`
+        ctx.shadowColor = "rgba(255, 255, 255, 0.4)"
+        ctx.shadowBlur = 5
+        c.lines.forEach((l) => {
+          ctx.lineWidth = l.width
+          ctx.beginPath()
+          ctx.moveTo(l.x1, l.y1)
+          ctx.lineTo(l.x2, l.y2)
+          ctx.stroke()
+        })
+        ctx.restore()
+      })
+      cracks = cracks.filter((c) => c.age < c.maxAge)
 
-        const newHead = {
-          x: (head.x + s.dir.x + cols) % cols,
-          y: (head.y + s.dir.y + rows) % rows,
-        }
-
-        s.body.unshift(newHead)
-
-        if (newHead.x === s.food.x && newHead.y === s.food.y) {
-          s.food = getRandomFoodPos()
+      // 3. Drawing explosion & flame particles
+      particles.forEach((p) => {
+        p.x += p.vx
+        p.y += p.vy
+        if (p.isFlame) {
+          p.alpha -= p.decay
+          p.size = Math.max(0, p.size - 0.2) // Fire shrinks as it rises
         } else {
-          s.body.pop()
+          p.alpha -= 0.02
         }
+        ctx.save()
+        ctx.globalAlpha = Math.max(0, p.alpha)
+        ctx.fillStyle = p.color
+        ctx.shadowBlur = p.isFlame ? 12 : 8
+        ctx.shadowColor = p.color
+        ctx.beginPath()
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2)
+        ctx.fill()
+        ctx.restore()
+      })
+      particles = particles.filter((p) => p.alpha > 0)
 
+      // 4. Run simulation step according to game speed tick
+      if (time - lastTime >= speed) {
+        lastTime = time
+
+        // Calculate next positions and check collisions
+        snakes.forEach((s, sIdx) => {
+          const head = s.body[0]
+          let nextDir = { ...s.dir }
+          const diffX = s.food.x - head.x
+          const diffY = s.food.y - head.y
+
+          const options = []
+          if (diffX > 0 && s.dir.x !== -1) options.push({ x: 1, y: 0 })
+          if (diffX < 0 && s.dir.x !== 1) options.push({ x: -1, y: 0 })
+          if (diffY > 0 && s.dir.y !== -1) options.push({ x: 0, y: 1 })
+          if (diffY < 0 && s.dir.y !== 1) options.push({ x: 0, y: -1 })
+
+          const allDirs = [
+            { x: 1, y: 0 },
+            { x: -1, y: 0 },
+            { x: 0, y: 1 },
+            { x: 0, y: -1 },
+          ]
+
+          const safeOptions = [...options, ...allDirs].filter((d) => {
+            if (d.x === -s.dir.x && d.y === -s.dir.y) return false
+            const newX = (head.x + d.x + cols) % cols
+            const newY = (head.y + d.y + rows) % rows
+            return !s.body.some((segment) => segment.x === newX && segment.y === newY)
+          })
+
+          if (safeOptions.length > 0) {
+            const targetOption = safeOptions.find(d => {
+              return (diffX > 0 && d.x === 1) || (diffX < 0 && d.x === -1) || (diffY > 0 && d.y === 1) || (diffY < 0 && d.y === -1)
+            })
+            nextDir = targetOption || safeOptions[Math.floor(Math.random() * safeOptions.length)]
+          }
+
+          s.dir = nextDir
+
+          const newHead = {
+            x: (head.x + s.dir.x + cols) % cols,
+            y: (head.y + s.dir.y + rows) % rows,
+          }
+
+          // Check if head hits another snake's body
+          let collided = false
+          snakes.forEach((other, otherIdx) => {
+            if (sIdx !== otherIdx) {
+              other.body.forEach((segment) => {
+                if (newHead.x === segment.x && newHead.y === segment.y) {
+                  collided = true
+                  const crashX = newHead.x * cellSize + cellSize / 2
+                  const crashY = newHead.y * cellSize + cellSize / 2
+                  
+                  spawnExplosion(crashX, crashY, s.color)
+                  spawnExplosion(crashX, crashY, other.color)
+                  cracks.push(generateCracks(crashX, crashY))
+                  fires.push({ x: crashX, y: crashY, age: 0, maxAge: 200 }) // Ignite!
+
+                  // Reset the crashed snake to a random position
+                  s.body = createSnakeBody(
+                    Math.floor(Math.random() * (cols - 4)) + 2,
+                    Math.floor(Math.random() * (rows - 4)) + 2,
+                    12,
+                    s.dir
+                  )
+                }
+              })
+            }
+          })
+
+          if (!collided) {
+            s.body.unshift(newHead)
+            if (newHead.x === s.food.x && newHead.y === s.food.y) {
+              s.food = getRandomFoodPos()
+            } else {
+              s.body.pop()
+            }
+          }
+        })
+      }
+
+      // Draw all snakes & food
+      snakes.forEach((s) => {
         // Draw Food
         ctx.fillStyle = "#ec4899"
         ctx.shadowBlur = 15
