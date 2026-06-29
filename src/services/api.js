@@ -32,6 +32,12 @@ class ApiService {
       const response = await fetch(url, config)
 
       if (!response.ok) {
+        if (endpoint !== "/auth/login" && (response.status === 401 || response.status === 403)) {
+          localStorage.removeItem("isAuthenticated")
+          localStorage.removeItem("admin_token")
+          window.location.reload()
+          return new Promise(() => {}) // pending promise to halt further execution in component
+        }
         throw new Error(`HTTP error! status: ${response.status}`)
       }
 

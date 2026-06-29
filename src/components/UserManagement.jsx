@@ -19,37 +19,11 @@ const UserManagement = () => {
     try {
       setLoading(true)
       setError(null)
-  const response = await apiService.getAllUsersV2()
-  setUsers(response.data || response.users || [])
+      const response = await apiService.getAllUsersV2()
+      setUsers(response.data || response.users || [])
     } catch (err) {
       setError("Failed to fetch users. Please try again.")
       console.error("Error fetching users:", err)
-      setUsers([
-        {
-          id: "1",
-          name: "John Doe",
-          email: "john@example.com",
-          role: "user",
-          joinDate: "2024-01-15",
-          status: "active",
-        },
-        {
-          id: "2",
-          name: "Jane Smith",
-          email: "jane@example.com",
-          role: "user",
-          joinDate: "2024-01-10",
-          status: "active",
-        },
-        {
-          id: "3",
-          name: "Bob Johnson",
-          email: "bob@example.com",
-          role: "merchant",
-          joinDate: "2024-01-12",
-          status: "inactive",
-        },
-      ])
     } finally {
       setLoading(false)
     }
@@ -129,11 +103,11 @@ const UserManagement = () => {
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Email
                 </th>
-               
+
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   DOB Date
                 </th>
-               
+
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
@@ -141,19 +115,19 @@ const UserManagement = () => {
                 <tr key={user.id || user._id} className="hover:bg-gray-50">
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center">
-                        <div className="w-10 h-10 rounded-full flex items-center justify-center bg-gray-300 overflow-hidden">
-                          {user.profilePic ? (
-                            <img
-                              src={user.profilePic}
-                              alt={user.name || user.email}
-                              className="w-10 h-10 object-cover rounded-full"
-                            />
-                          ) : (
-                            <span className="text-sm font-medium text-gray-700">
-                              {(user.name || user.firstName || user.email)?.charAt(0).toUpperCase()}
-                            </span>
-                          )}
-                        </div>
+                      <div className="w-10 h-10 rounded-full flex items-center justify-center bg-gray-300 overflow-hidden">
+                        {user.profilePic ? (
+                          <img
+                            src={user.profilePic}
+                            alt={user.name || user.email}
+                            className="w-10 h-10 object-cover rounded-full"
+                          />
+                        ) : (
+                          <span className="text-sm font-medium text-gray-700">
+                            {(user.name || user.firstName || user.email)?.charAt(0).toUpperCase()}
+                          </span>
+                        )}
+                      </div>
                       <div className="ml-4">
                         <div className="text-sm font-medium text-gray-900">
                           {user.name || `${user.firstName || ""} ${user.lastName || ""}`.trim() || user.email}
@@ -163,7 +137,7 @@ const UserManagement = () => {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="text-sm text-gray-500">{user.email}</div>
-                  </td>                
+                  </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     {user.dob || new Date(user.createdAt).toLocaleDateString()}
                   </td>
