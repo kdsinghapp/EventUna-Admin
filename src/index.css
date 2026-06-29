@@ -184,3 +184,55 @@ button:active {
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02), 0 1px 2px rgba(0, 0, 0, 0.04) !important;
   border: 1px solid #edf2f7 !important;
 }
+
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.animate-shimmer {
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-4px); }
+  75% { transform: translateX(4px); }
+}
+
+.animate-shake {
+  animation: shake 0.3s ease-in-out;
+}
+
+@keyframes tilt {
+  0%, 50%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(1deg); }
+  75% { transform: rotate(-1deg); }
+}
+
+.animate-tilt {
+  animation: tilt 10s infinite linear;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+  to {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+}
+
+.animate-spin-slow {
+  animation: spin 6s linear infinite;
+}
