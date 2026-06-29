@@ -1,4 +1,4 @@
-name: Deploy Dashboard Frontend
+name: Build and Deploy Dashboard to EC2
 
 on:
   push:
@@ -7,12 +7,17 @@ on:
 
 jobs:
   deploy:
-    name: Build and Deploy Dashboard to EC2
+    name: Deploy Dashboard Frontend
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: Show project files
+        run: |
+          pwd
+          ls -la
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -29,6 +34,12 @@ jobs:
 
       - name: Build frontend
         run: npm run build
+
+      - name: Check build output
+        run: |
+          ls -la
+          echo "Checking dist folder..."
+          ls -la dist
 
       - name: Setup SSH key
         run: |
