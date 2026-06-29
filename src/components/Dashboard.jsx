@@ -4,9 +4,6 @@ import {
   FaCog,
   FaUsers,
   FaChartLine,
-  FaServer,
-  FaDatabase,
-  FaNetworkWired
 } from "react-icons/fa"
 import API from "../api/axios"
 
@@ -88,7 +85,6 @@ const Dashboard = ({ setActiveSection }) => {
         const res = await API.get("/admin/all-merchants")
         console.log("Merchants API response data:", res.data)
         if (res.data && res.data.merchants) {
-          // Sort by createdAt descending (most recent first)
           const sorted = [...res.data.merchants].sort(
             (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
           )
@@ -123,7 +119,6 @@ const Dashboard = ({ setActiveSection }) => {
     fetchCategorySplit()
   }, [])
 
-  // Relative time helper
   const getRelativeTime = (dateString) => {
     if (!dateString) return ""
     try {
@@ -146,7 +141,6 @@ const Dashboard = ({ setActiveSection }) => {
     }
   }
 
-  // Get merchant avatar initials and gradient color
   const getAvatarStyle = (name) => {
     const initials = name.split(" ").map(n => n[0]).join("").substring(0, 2).toUpperCase()
     const colors = [
@@ -163,7 +157,7 @@ const Dashboard = ({ setActiveSection }) => {
   return (
     <div className="space-y-8 max-w-7xl mx-auto px-1 py-2">
 
-      {/* Stats Grid */}
+
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {stats.map((stat, index) => (
           <div
@@ -184,75 +178,8 @@ const Dashboard = ({ setActiveSection }) => {
         ))}
       </div>
 
-      {/* Analytics Visualization Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
 
-
-        {/* Popular Categories Segmented Radial / Progress Bars */}
-        <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6 flex flex-col justify-between">
-          <div>
-            <div className="flex items-center justify-between mb-6">
-              <div>
-                <h3 className="text-lg font-bold text-slate-900">Service Category Split</h3>
-                <p className="text-xs text-slate-400 mt-0.5">Top performing event types.</p>
-              </div>
-              <FaChartLine className="text-indigo-500" />
-            </div>
-
-            <div className="space-y-4.5">
-              {loadingSplit ? (
-                <div className="flex flex-col items-center justify-center py-10 space-y-2 text-slate-400">
-                  <div className="w-6 h-6 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
-                  <span className="text-xs">Loading split data...</span>
-                </div>
-              ) : categorySplit.length === 0 ? (
-                <div className="text-center py-10 text-xs text-slate-400 font-medium">
-                  No service categories found.
-                </div>
-              ) : (
-                categorySplit.map((category, idx) => {
-                  const colors = [
-                    { color: "bg-indigo-500", track: "bg-indigo-50" },
-                    { color: "bg-emerald-500", track: "bg-emerald-50" },
-                    { color: "bg-cyan-500", track: "bg-cyan-50" },
-                    { color: "bg-amber-500", track: "bg-amber-50" },
-                    { color: "bg-pink-500", track: "bg-pink-50" },
-                    { color: "bg-purple-500", track: "bg-purple-50" },
-                    { color: "bg-rose-500", track: "bg-rose-50" },
-                    { color: "bg-teal-500", track: "bg-teal-50" }
-                  ]
-                  const colorPair = colors[idx % colors.length]
-                  return (
-                    <div key={category._id || idx} className="space-y-1.5">
-                      <div className="flex justify-between text-xs font-semibold text-slate-700">
-                        <span>{category.categoryName}</span>
-                        <span className="text-slate-400">
-                          {category.count} <span className="text-3xs">({category.percentage}%)</span>
-                        </span>
-                      </div>
-                      <div className={`w-full h-2 rounded-full ${colorPair.track}`}>
-                        <div
-                          className={`h-full rounded-full ${colorPair.color} transition-all duration-500`}
-                          style={{ width: `${category.percentage}%` }}
-                        ></div>
-                      </div>
-                    </div>
-                  )
-                })
-              )}
-            </div>
-          </div>
-
-          <div className="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-400">
-            <span>Total listings: {totalListings} services</span>
-            <span
-              onClick={() => setActiveSection && setActiveSection("add-event-type")}
-              className="font-semibold text-indigo-600 cursor-pointer hover:underline"
-            >
-              View Categories
-            </span>
-          </div>
-        </div>
         <div className="lg:col-span-2 bg-white rounded-2xl border border-slate-100 shadow-sm p-6">
           <div className="flex items-center justify-between mb-6">
             <div>
@@ -325,10 +252,74 @@ const Dashboard = ({ setActiveSection }) => {
             )}
           </div>
         </div>
+        <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-6 flex flex-col justify-between">
+          <div>
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <h3 className="text-lg font-bold text-slate-900">Service Category Split</h3>
+                <p className="text-xs text-slate-400 mt-0.5">Top performing event types.</p>
+              </div>
+              <FaChartLine className="text-indigo-500" />
+            </div>
+
+            <div className="space-y-4.5">
+              {loadingSplit ? (
+                <div className="flex flex-col items-center justify-center py-10 space-y-2 text-slate-400">
+                  <div className="w-6 h-6 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
+                  <span className="text-xs">Loading split data...</span>
+                </div>
+              ) : categorySplit.length === 0 ? (
+                <div className="text-center py-10 text-xs text-slate-400 font-medium">
+                  No service categories found.
+                </div>
+              ) : (
+                categorySplit.map((category, idx) => {
+                  const colors = [
+                    { color: "bg-indigo-500", track: "bg-indigo-50" },
+                    { color: "bg-emerald-500", track: "bg-emerald-50" },
+                    { color: "bg-cyan-500", track: "bg-cyan-50" },
+                    { color: "bg-amber-500", track: "bg-amber-50" },
+                    { color: "bg-pink-500", track: "bg-pink-50" },
+                    { color: "bg-purple-500", track: "bg-purple-50" },
+                    { color: "bg-rose-500", track: "bg-rose-50" },
+                    { color: "bg-teal-500", track: "bg-teal-50" }
+                  ]
+                  const colorPair = colors[idx % colors.length]
+                  return (
+                    <div key={category._id || idx} className="space-y-1.5">
+                      <div className="flex justify-between text-xs font-semibold text-slate-700">
+                        <span>{category.categoryName}</span>
+                        <span className="text-slate-400">
+                          {category.count} <span className="text-3xs">({category.percentage}%)</span>
+                        </span>
+                      </div>
+                      <div className={`w-full h-2 rounded-full ${colorPair.track}`}>
+                        <div
+                          className={`h-full rounded-full ${colorPair.color} transition-all duration-500`}
+                          style={{ width: `${category.percentage}%` }}
+                        ></div>
+                      </div>
+                    </div>
+                  )
+                })
+              )}
+            </div>
+          </div>
+
+          <div className="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-400">
+            <span>Total listings: {totalListings} services</span>
+            <span
+              onClick={() => setActiveSection && setActiveSection("add-event-type")}
+              className="font-semibold text-indigo-600 cursor-pointer hover:underline"
+            >
+              View Categories
+            </span>
+          </div>
+        </div>
       </div>
+
     </div>
   )
 }
 
 export default Dashboard
-
