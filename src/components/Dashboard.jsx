@@ -46,6 +46,9 @@ const Dashboard = ({ setActiveSection }) => {
 
   const [merchants, setMerchants] = useState([])
   const [loadingMerchants, setLoadingMerchants] = useState(true)
+  const [categorySplit, setCategorySplit] = useState([])
+  const [totalListings, setTotalListings] = useState(0)
+  const [loadingSplit, setLoadingSplit] = useState(true)
 
   useEffect(() => {
     async function fetchDashboardStats() {
@@ -98,8 +101,26 @@ const Dashboard = ({ setActiveSection }) => {
       }
     }
 
+    async function fetchCategorySplit() {
+      try {
+        setLoadingSplit(true)
+        console.log("Calling API.get('/admin/service-category-split')...")
+        const res = await API.get("/admin/service-category-split")
+        console.log("Category split API response data:", res.data)
+        if (res.data && res.data.status) {
+          setCategorySplit(res.data.data || [])
+          setTotalListings(res.data.totalListings || 0)
+        }
+      } catch (error) {
+        console.error("Error fetching service category split:", error)
+      } finally {
+        setLoadingSplit(false)
+      }
+    }
+
     fetchDashboardStats()
     fetchMerchants()
+    fetchCategorySplit()
   }, [])
 
   // Relative time helper
@@ -242,33 +263,57 @@ const Dashboard = ({ setActiveSection }) => {
             </div>
 
             <div className="space-y-4.5">
-              {[
-                { name: "Catering Services", percentage: 45, count: 40, color: "bg-indigo-500", track: "bg-indigo-50" },
-                { name: "Decorations & Setup", percentage: 30, count: 27, color: "bg-emerald-500", track: "bg-emerald-50" },
-                { name: "Venue Bookings", percentage: 15, count: 13, color: "bg-cyan-500", track: "bg-cyan-50" },
-                { name: "Photography & Audio", percentage: 10, count: 9, color: "bg-amber-500", track: "bg-amber-50" }
-              ].map((category, idx) => (
-                <div key={idx} className="space-y-1.5">
-                  <div className="flex justify-between text-xs font-semibold text-slate-700">
-                    <span>{category.name}</span>
-                    <span className="text-slate-400">
-                      {category.count} <span className="text-3xs">({category.percentage}%)</span>
-                    </span>
-                  </div>
-                  <div className={`w-full h-2 rounded-full ${category.track}`}>
-                    <div
-                      className={`h-full rounded-full ${category.color} transition-all duration-500`}
-                      style={{ width: `${category.percentage}%` }}
-                    ></div>
-                  </div>
+              {loadingSplit ? (
+                <div className="flex flex-col items-center justify-center py-10 space-y-2 text-slate-400">
+                  <div className="w-6 h-6 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
+                  <span className="text-xs">Loading split data...</span>
                 </div>
-              ))}
+              ) : categorySplit.length === 0 ? (
+                <div className="text-center py-10 text-xs text-slate-400 font-medium">
+                  No service categories found.
+                </div>
+              ) : (
+                categorySplit.map((category, idx) => {
+                  const colors = [
+                    { color: "bg-indigo-500", track: "bg-indigo-50" },
+                    { color: "bg-emerald-500", track: "bg-emerald-50" },
+                    { color: "bg-cyan-500", track: "bg-cyan-50" },
+                    { color: "bg-amber-500", track: "bg-amber-50" },
+                    { color: "bg-pink-500", track: "bg-pink-50" },
+                    { color: "bg-purple-500", track: "bg-purple-50" },
+                    { color: "bg-rose-500", track: "bg-rose-50" },
+                    { color: "bg-teal-500", track: "bg-teal-50" }
+                  ]
+                  const colorPair = colors[idx % colors.length]
+                  return (
+                    <div key={category._id || idx} className="space-y-1.5">
+                      <div className="flex justify-between text-xs font-semibold text-slate-700">
+                        <span>{category.categoryName}</span>
+                        <span className="text-slate-400">
+                          {category.count} <span className="text-3xs">({category.percentage}%)</span>
+                        </span>
+                      </div>
+                      <div className={`w-full h-2 rounded-full ${colorPair.track}`}>
+                        <div
+                          className={`h-full rounded-full ${colorPair.color} transition-all duration-500`}
+                          style={{ width: `${category.percentage}%` }}
+                        ></div>
+                      </div>
+                    </div>
+                  )
+                })
+              )}
             </div>
           </div>
 
           <div className="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-400">
-            <span>Total listings: 89 services</span>
-            <span className="font-semibold text-indigo-650 cursor-pointer hover:underline">View Categories</span>
+            <span>Total listings: {totalListings} services</span>
+            <span
+              onClick={() => setActiveSection && setActiveSection("add-event-type")}
+              className="font-semibold text-indigo-600 cursor-pointer hover:underline"
+            >
+              View Categories
+            </span>
           </div>
         </div>
       </div>
@@ -323,15 +368,14 @@ const Dashboard = ({ setActiveSection }) => {
 
                     <div className="flex items-center gap-3">
                       <span
-                        className={`px-2.5 py-1 rounded-lg text-2xs font-bold uppercase tracking-wider border ${
-                          status === "approved"
+                        className={`px-2.5 py-1 rounded-lg text-2xs font-bold uppercase tracking-wider border ${status === "approved"
                             ? "bg-emerald-50 text-emerald-700 border-emerald-100"
                             : status === "rejected"
-                            ? "bg-rose-50 text-rose-750 border-rose-100"
-                            : status === "pending"
-                            ? "bg-amber-50 text-amber-700 border-amber-100"
-                            : "bg-slate-50 text-slate-650 border-slate-100"
-                        }`}
+                              ? "bg-rose-50 text-rose-750 border-rose-100"
+                              : status === "pending"
+                                ? "bg-amber-50 text-amber-700 border-amber-100"
+                                : "bg-slate-50 text-slate-650 border-slate-100"
+                          }`}
                       >
                         {status}
                       </span>
