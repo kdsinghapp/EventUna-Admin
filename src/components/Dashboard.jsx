@@ -253,10 +253,6 @@ const Dashboard = ({ setActiveSection }) => {
             </span>
           </div>
         </div>
-      </div>
-
-      {/* Recent Activity & System Status */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 bg-white rounded-2xl border border-slate-100 shadow-sm p-6">
           <div className="flex items-center justify-between mb-6">
             <div>
