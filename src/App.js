@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Sidebar from "./components/Sidebar"
 import Header from "./components/Header"
 import Dashboard from "./components/Dashboard"
@@ -13,12 +13,18 @@ import Login from "./components/Login"
 import EventTypes from "./components/EventTypes"
 
 function App() {
-  const [activeSection, setActiveSection] = useState("dashboard")
+  const [activeSection, setActiveSection] = useState(() => {
+    return localStorage.getItem("activeSection") || "dashboard"
+  })
   const [isAuthenticated, setIsAuthenticated] = useState(() => {
     // Check localStorage for auth state on first render
     return localStorage.getItem("isAuthenticated") === "true"
   })
   const [sidebarOpen, setSidebarOpen] = useState(true)
+
+  useEffect(() => {
+    localStorage.setItem("activeSection", activeSection)
+  }, [activeSection])
 
   const renderContent = () => {
     switch (activeSection) {
@@ -54,6 +60,8 @@ function App() {
   const handleLogout = () => {
     setIsAuthenticated(false)
     localStorage.removeItem("isAuthenticated")
+    localStorage.removeItem("activeSection")
+    setActiveSection("dashboard")
   }
 
   if (!isAuthenticated) {
