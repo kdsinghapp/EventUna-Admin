@@ -26,20 +26,16 @@ jobs:
 
       - name: Install dependencies
         run: |
-          if [ -f package-lock.json ]; then
-            npm ci
-          else
-            npm install
-          fi
+          npm ci
 
       - name: Build frontend
-        run: npm run build
+        run: |
+          npm run build
 
       - name: Check build output
         run: |
-          ls -la
-          echo "Checking dist folder..."
-          ls -la dist
+          echo "Checking build folder..."
+          ls -la build
 
       - name: Setup SSH key
         run: |
@@ -48,9 +44,9 @@ jobs:
           chmod 600 ~/.ssh/eventuna_key
           ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
 
-      - name: Deploy dist to EC2
+      - name: Deploy build to EC2
         run: |
-          rsync -avz --delete -e "ssh -i ~/.ssh/eventuna_key" ./dist/ ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/var/www/eventuna-dashboard/
+          rsync -avz --delete -e "ssh -i ~/.ssh/eventuna_key" ./build/ ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/var/www/eventuna-dashboard/
 
       - name: Reload Nginx
         run: |
