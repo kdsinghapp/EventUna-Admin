@@ -1,0 +1,46 @@
+name: Deploy Dashboard Frontend
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    name: Build and Deploy Dashboard to EC2
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install dependencies
+        run: |
+          if [ -f package-lock.json ]; then
+            npm ci
+          else
+            npm install
+          fi
+
+      - name: Build frontend
+        run: npm run build
+
+      - name: Setup SSH key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.EC2_SSH_KEY }}" > ~/.ssh/eventuna_key
+          chmod 600 ~/.ssh/eventuna_key
+          ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Deploy dist to EC2
+        run: |
+          rsync -avz --delete -e "ssh -i ~/.ssh/eventuna_key" ./dist/ ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/var/www/eventuna-dashboard/
+
+      - name: Reload Nginx
+        run: |
+          ssh -i ~/.ssh/eventuna_key ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} "sudo nginx -t && sudo systemctl reload nginx"
