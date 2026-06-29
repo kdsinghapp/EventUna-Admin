@@ -39,24 +39,6 @@ const UserManagement = () => {
     return matchesSearch && matchesRole
   })
 
-  // Commented out as not currently used
-  // const getStatusColor = (status) => {
-  //   return status === "active" ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
-  // }
-
-  // const getRoleColor = (role) => {
-  //   switch (role) {
-  //     case "admin":
-  //       return "bg-purple-100 text-purple-800"
-  //     case "merchant":
-  //       return "bg-blue-100 text-blue-800"
-  //     case "user":
-  //       return "bg-gray-100 text-gray-800"
-  //     default:
-  //       return "bg-gray-100 text-gray-800"
-  //   }
-  // }
-
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">

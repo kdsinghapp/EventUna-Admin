@@ -10,13 +10,16 @@ const PlacePreferences = () => {
   const [editId, setEditId] = useState(null)
   const [editName, setEditName] = useState("")
   const [error, setError] = useState(null)
+  const [deleteId, setDeleteId] = useState(null)
 
   const fetchPreferences = async () => {
     try {
       setLoading(true)
       setError(null)
       const response = await apiService.getPlacePreferences()
-      if (response && Array.isArray(response.preferences)) {
+      if (response && Array.isArray(response.data)) {
+        setPreferences(response.data)
+      } else if (response && Array.isArray(response.preferences)) {
         setPreferences(response.preferences)
       } else {
         setPreferences([])
@@ -62,15 +65,21 @@ const PlacePreferences = () => {
     }
   }
 
-  const handleDelete = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this preference?")) return
+  const handleDelete = (id) => {
+    setDeleteId(id)
+  }
+
+  const handleConfirmDelete = async () => {
+    if (!deleteId) return
     try {
       setError(null)
-      await apiService.deletePlacePreference(id)
+      await apiService.deletePlacePreference(deleteId)
+      setDeleteId(null)
       fetchPreferences()
     } catch (err) {
       console.error("Error deleting preference:", err)
       setError("Failed to delete preference.")
+      setDeleteId(null)
     }
   }
 
@@ -213,6 +222,40 @@ const PlacePreferences = () => {
           </table>
         </div>
       </div>
+
+      {/* Delete Confirmation Modal */}
+      {deleteId && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm transition-opacity duration-300">
+          <div className="bg-white rounded-2xl shadow-xl border border-slate-100 max-w-md w-full p-6 space-y-6 mx-4 transform transition-all scale-100 animate-in fade-in zoom-in-95 duration-200">
+            <div className="flex items-start gap-4">
+              <div className="w-10 h-10 rounded-full bg-rose-50 flex items-center justify-center shrink-0">
+                <svg className="w-5 h-5 text-rose-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+              </div>
+              <div className="space-y-1">
+                <h3 className="text-base font-bold text-slate-900">Delete Preference</h3>
+                <p className="text-xs text-slate-500 leading-relaxed">Are you sure you want to delete this place preference? This action cannot be undone.</p>
+              </div>
+            </div>
+            
+            <div className="flex justify-end gap-2.5">
+              <button
+                onClick={() => setDeleteId(null)}
+                className="px-4 py-2 border border-slate-200 text-slate-700 hover:bg-slate-50 rounded-xl text-xs font-semibold transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleConfirmDelete}
+                className="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-semibold transition-colors shadow-xs"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
