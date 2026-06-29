@@ -1,6 +1,6 @@
 "use client"
 
-import { FaBars, FaBell } from "react-icons/fa"
+import { FaBars } from "react-icons/fa"
 
 const Header = ({ activeSection, toggleSidebar, onLogout }) => {
   const getSectionDetails = (section) => {
