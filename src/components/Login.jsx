@@ -105,8 +105,6 @@ const Login = ({ onLogin }) => {
       
       for (let i = 0; i < numMainBranches; i++) {
         const angle = (i / numMainBranches) * Math.PI * 2 + (Math.random() - 0.5) * 0.4
-        let curX = startX
-        let curY = startY
         let length = 80 + Math.random() * 180
         
         const endX = startX + Math.cos(angle) * length
