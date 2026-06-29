@@ -3,10 +3,7 @@ import {
   FaStore,
   FaCog,
   FaUsers,
-  FaPlus,
-  FaSlidersH,
   FaChartLine,
-  FaArrowUp,
   FaServer,
   FaDatabase,
   FaNetworkWired
@@ -47,20 +44,7 @@ const Dashboard = () => {
     }
   ])
 
-  const [greeting, setGreeting] = useState("Good afternoon")
-  const [currentDate, setCurrentDate] = useState("")
-
   useEffect(() => {
-    // Set greeting based on time
-    const hr = new Date().getHours()
-    if (hr < 12) setGreeting("Good morning")
-    else if (hr < 17) setGreeting("Good afternoon")
-    else setGreeting("Good evening")
-
-    // Set formatted date
-    const options = { weekday: "long", year: "numeric", month: "long", day: "numeric" }
-    setCurrentDate(new Date().toLocaleDateString(undefined, options))
-
     async function fetchDashboardStats() {
       try {
         console.log("Calling API.get('/admin/dashboard-stats')...");
@@ -92,29 +76,6 @@ const Dashboard = () => {
     }
     fetchDashboardStats()
   }, [])
-
-  // Helper to generate SVG path for sparklines
-  const getSparklinePath = (data, width = 120, height = 36) => {
-    if (!data || data.length === 0) return ""
-    const max = Math.max(...data)
-    const min = Math.min(...data)
-    const range = max - min || 1
-
-    return data
-      .map((val, index) => {
-        const x = (index / (data.length - 1)) * width
-        const y = height - ((val - min) / range) * (height - 6) - 3
-        return `${index === 0 ? "M" : "L"} ${x.toFixed(1)} ${y.toFixed(1)}`
-      })
-      .join(" ")
-  };
-
-  // Helper to generate SVG area path for sparkline gradient fills
-  const getSparklineAreaPath = (data, width = 120, height = 36) => {
-    const linePath = getSparklinePath(data, width, height)
-    if (!linePath) return ""
-    return `${linePath} L ${width} ${height} L 0 ${height} Z`
-  }
 
   // Get merchant avatar initials and gradient color
   const getAvatarStyle = (name) => {
