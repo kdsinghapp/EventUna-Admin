@@ -29,7 +29,7 @@ function App() {
   const renderContent = () => {
     switch (activeSection) {
       case "dashboard":
-        return <Dashboard />
+        return <Dashboard setActiveSection={setActiveSection} />
       case "all-merchants":
         return <MerchantManagement />
       case "all-users":

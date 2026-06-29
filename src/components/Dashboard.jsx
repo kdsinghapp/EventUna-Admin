@@ -10,7 +10,7 @@ import {
 } from "react-icons/fa"
 import API from "../api/axios"
 
-const Dashboard = () => {
+const Dashboard = ({ setActiveSection }) => {
   const [stats, setStats] = useState([
     {
       title: "Total Merchants",
@@ -44,6 +44,9 @@ const Dashboard = () => {
     }
   ])
 
+  const [merchants, setMerchants] = useState([])
+  const [loadingMerchants, setLoadingMerchants] = useState(true)
+
   useEffect(() => {
     async function fetchDashboardStats() {
       try {
@@ -51,12 +54,12 @@ const Dashboard = () => {
         const res = await API.get("/admin/dashboard-stats")
         console.log("API response data:", res.data)
         if (res.data && res.data.status) {
-          const { merchants, users, events } = res.data.data
-          console.log("Extracted data:", { merchants, users, events })
+          const { merchants: merchantsStat, users, events } = res.data.data
+          console.log("Extracted data:", { merchants: merchantsStat, users, events })
           setStats((prev) =>
             prev.map((stat) => {
               if (stat.title === "Total Merchants") {
-                return { ...stat, value: (merchants?.allTotal || 0).toLocaleString() }
+                return { ...stat, value: (merchantsStat?.allTotal || 0).toLocaleString() }
               }
               if (stat.title === "Total Events") {
                 return { ...stat, value: (events?.allTotal || 0).toLocaleString() }
@@ -74,8 +77,53 @@ const Dashboard = () => {
         console.error("Error fetching dashboard stats:", error)
       }
     }
+
+    async function fetchMerchants() {
+      try {
+        setLoadingMerchants(true)
+        console.log("Calling API.get('/admin/all-merchants')...")
+        const res = await API.get("/admin/all-merchants")
+        console.log("Merchants API response data:", res.data)
+        if (res.data && res.data.merchants) {
+          // Sort by createdAt descending (most recent first)
+          const sorted = [...res.data.merchants].sort(
+            (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+          )
+          setMerchants(sorted)
+        }
+      } catch (error) {
+        console.error("Error fetching merchants:", error)
+      } finally {
+        setLoadingMerchants(false)
+      }
+    }
+
     fetchDashboardStats()
+    fetchMerchants()
   }, [])
+
+  // Relative time helper
+  const getRelativeTime = (dateString) => {
+    if (!dateString) return ""
+    try {
+      const date = new Date(dateString)
+      const now = new Date()
+      const diffMs = now - date
+      if (isNaN(diffMs)) return ""
+
+      const diffMins = Math.floor(diffMs / 60000)
+      const diffHours = Math.floor(diffMins / 60000)
+      const diffDays = Math.floor(diffHours / 24)
+
+      if (diffMins < 1) return "Just now"
+      if (diffMins < 60) return `${diffMins} minute${diffMins > 1 ? "s" : ""} ago`
+      if (diffHours < 24) return `${diffHours} hour${diffHours > 1 ? "s" : ""} ago`
+      if (diffDays < 30) return `${diffDays} day${diffDays > 1 ? "s" : ""} ago`
+      return date.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })
+    } catch (e) {
+      return ""
+    }
+  }
 
   // Get merchant avatar initials and gradient color
   const getAvatarStyle = (name) => {
@@ -233,49 +281,71 @@ const Dashboard = () => {
               <h3 className="text-lg font-bold text-slate-900">Recent Merchant Applications</h3>
               <p className="text-xs text-slate-400 mt-0.5">Merchants awaiting panel approval status.</p>
             </div>
-            <button className="text-xs font-semibold text-indigo-600 bg-indigo-50 hover:bg-indigo-100 px-3 py-1.5 rounded-xl transition-all">
+            <button
+              onClick={() => setActiveSection && setActiveSection("all-merchants")}
+              className="text-xs font-semibold text-indigo-600 bg-indigo-50 hover:bg-indigo-100 px-3 py-1.5 rounded-xl transition-all"
+            >
               View All
             </button>
           </div>
           <div className="space-y-4">
-            {[
-              { name: "ABC Catering Services", status: "pending", time: "2 hours ago" },
-              { name: "XYZ Event Planners", status: "approved", time: "5 hours ago" },
-              { name: "Party Decorators Inc", status: "pending", time: "1 day ago" }
-            ].map((item, index) => {
-              const { initials, gradient } = getAvatarStyle(item.name)
-              return (
-                <div
-                  key={index}
-                  className="flex items-center justify-between p-3.5 rounded-xl border border-slate-100 hover:border-slate-200 hover:bg-slate-50/40 transition-all shadow-2xs"
-                >
-                  <div className="flex items-center space-x-3.5">
-                    {/* Avatar Initials with nice Gradient */}
-                    <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${gradient} flex items-center justify-center text-white text-sm font-bold shadow-sm`}>
-                      {initials}
-                    </div>
-                    <div>
-                      <p className="font-bold text-sm text-slate-800">{item.name}</p>
-                      <p className="text-xs text-slate-400">{item.time}</p>
-                    </div>
-                  </div>
+            {loadingMerchants ? (
+              <div className="flex flex-col items-center justify-center py-10 space-y-2 text-slate-400">
+                <div className="w-6 h-6 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
+                <span className="text-xs">Loading applications...</span>
+              </div>
+            ) : merchants.length === 0 ? (
+              <div className="text-center py-10 text-xs text-slate-400 font-medium">
+                No recent merchant applications found.
+              </div>
+            ) : (
+              merchants.slice(0, 5).map((item, index) => {
+                const name = item.serviceName || item.fullName || item.email || "Unknown Merchant"
+                const { initials, gradient } = getAvatarStyle(name)
+                const status = item.applicationStatus || "pending"
+                const timeStr = getRelativeTime(item.createdAt) || "recently"
 
-                  <div className="flex items-center gap-3">
-                    <span
-                      className={`px-2.5 py-1 rounded-lg text-2xs font-bold uppercase tracking-wider border ${item.status === "approved"
-                        ? "bg-emerald-50 text-emerald-700 border-emerald-100"
-                        : "bg-amber-50 text-amber-700 border-amber-100"
+                return (
+                  <div
+                    key={item._id || index}
+                    className="flex items-center justify-between p-3.5 rounded-xl border border-slate-100 hover:border-slate-200 hover:bg-slate-50/40 transition-all shadow-2xs"
+                  >
+                    <div className="flex items-center space-x-3.5">
+                      {/* Avatar Initials with nice Gradient */}
+                      <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${gradient} flex items-center justify-center text-white text-sm font-bold shadow-sm`}>
+                        {initials}
+                      </div>
+                      <div>
+                        <p className="font-bold text-sm text-slate-800">{name}</p>
+                        <p className="text-xs text-slate-400">{timeStr}</p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-3">
+                      <span
+                        className={`px-2.5 py-1 rounded-lg text-2xs font-bold uppercase tracking-wider border ${
+                          status === "approved"
+                            ? "bg-emerald-50 text-emerald-700 border-emerald-100"
+                            : status === "rejected"
+                            ? "bg-rose-50 text-rose-750 border-rose-100"
+                            : status === "pending"
+                            ? "bg-amber-50 text-amber-700 border-amber-100"
+                            : "bg-slate-50 text-slate-650 border-slate-100"
                         }`}
-                    >
-                      {item.status}
-                    </span>
-                    <button className="text-xs font-semibold text-slate-500 hover:text-slate-800 border border-slate-200 hover:border-slate-300 rounded-lg px-2.5 py-1 bg-white hover:bg-slate-50">
-                      Review
-                    </button>
+                      >
+                        {status}
+                      </span>
+                      <button
+                        onClick={() => setActiveSection && setActiveSection("all-merchants")}
+                        className="text-xs font-semibold text-slate-500 hover:text-slate-800 border border-slate-200 hover:border-slate-300 rounded-lg px-2.5 py-1 bg-white hover:bg-slate-50"
+                      >
+                        Review
+                      </button>
+                    </div>
                   </div>
-                </div>
-              )
-            })}
+                )
+              })
+            )}
           </div>
         </div>
 
