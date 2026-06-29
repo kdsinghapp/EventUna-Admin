@@ -11,6 +11,7 @@ import {
   FaDatabase,
   FaNetworkWired
 } from "react-icons/fa"
+import API from "../api/axios"
 
 const Dashboard = () => {
   const [stats, setStats] = useState([
@@ -25,8 +26,8 @@ const Dashboard = () => {
       sparkline: [10, 15, 8, 20, 18, 25, 28]
     },
     {
-      title: "Active Services",
-      value: "89",
+      title: "Total Events",
+      value: "-",
       change: "+4.8%",
       trend: "up",
       color: "from-emerald-500 to-emerald-600",
@@ -36,7 +37,7 @@ const Dashboard = () => {
     },
     {
       title: "Total Users",
-      value: "2,341",
+      value: "-",
       change: "+18.2%",
       trend: "up",
       color: "from-cyan-500 to-cyan-600",
@@ -60,16 +61,36 @@ const Dashboard = () => {
     const options = { weekday: "long", year: "numeric", month: "long", day: "numeric" }
     setCurrentDate(new Date().toLocaleDateString(undefined, options))
 
-    // Simulate API call for merchants
-    async function fetchMerchantStats() {
-      const response = { totalMerchants: 2 }
-      setStats((prev) =>
-        prev.map((stat) =>
-          stat.title === "Total Merchants" ? { ...stat, value: response.totalMerchants.toString() } : stat
-        )
-      )
+    async function fetchDashboardStats() {
+      try {
+        console.log("Calling API.get('/admin/dashboard-stats')...");
+        const res = await API.get("/admin/dashboard-stats")
+        console.log("API response data:", res.data)
+        if (res.data && res.data.status) {
+          const { merchants, users, events } = res.data.data
+          console.log("Extracted data:", { merchants, users, events })
+          setStats((prev) =>
+            prev.map((stat) => {
+              if (stat.title === "Total Merchants") {
+                return { ...stat, value: (merchants?.allTotal || 0).toLocaleString() }
+              }
+              if (stat.title === "Total Events") {
+                return { ...stat, value: (events?.allTotal || 0).toLocaleString() }
+              }
+              if (stat.title === "Total Users") {
+                return { ...stat, value: (users?.allTotal || 0).toLocaleString() }
+              }
+              return stat
+            })
+          )
+        } else {
+          console.warn("API returned status false or empty data", res.data)
+        }
+      } catch (error) {
+        console.error("Error fetching dashboard stats:", error)
+      }
     }
-    fetchMerchantStats()
+    fetchDashboardStats()
   }, [])
 
   // Helper to generate SVG path for sparklines
@@ -78,7 +99,7 @@ const Dashboard = () => {
     const max = Math.max(...data)
     const min = Math.min(...data)
     const range = max - min || 1
-    
+
     return data
       .map((val, index) => {
         const x = (index / (data.length - 1)) * width
@@ -111,30 +132,6 @@ const Dashboard = () => {
 
   return (
     <div className="space-y-8 max-w-7xl mx-auto px-1 py-2">
-      {/* Header Dashboard Welcome */}
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 bg-white p-6 rounded-2xl border border-slate-100 shadow-sm relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-50 rounded-full -mr-20 -mt-20 blur-3xl opacity-50 z-0"></div>
-        <div className="z-10">
-          <span className="text-xs font-bold uppercase tracking-widest text-indigo-650 bg-indigo-50 px-3 py-1 rounded-full">
-            Admin Console
-          </span>
-          <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight mt-2.5">
-            {greeting}, Administrator
-          </h1>
-          <p className="text-slate-500 text-sm mt-1 flex items-center gap-1.5">
-            <span className="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-            Overview Dashboard • {currentDate}
-          </p>
-        </div>
-        <div className="flex gap-3 z-10">
-          <button className="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-slate-700 bg-white border border-slate-200 rounded-xl hover:bg-slate-50 hover:border-slate-300 shadow-sm">
-            <FaSlidersH className="text-slate-500" /> Settings
-          </button>
-          <button className="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white bg-indigo-600 rounded-xl hover:bg-indigo-700 shadow-md shadow-indigo-600/10 hover:shadow-indigo-600/20">
-            <FaPlus /> New Event
-          </button>
-        </div>
-      </div>
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -151,45 +148,6 @@ const Dashboard = () => {
               </div>
               <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${stat.color} flex items-center justify-center text-white shadow-lg`}>
                 <span className="text-lg">{stat.icon}</span>
-              </div>
-            </div>
-
-            {/* Sparkline & Trend Info */}
-            <div className="mt-6 flex items-end justify-between gap-4">
-              <div className="flex items-center gap-1.5">
-                <span className="flex items-center justify-center w-5 h-5 rounded-full bg-emerald-50 text-emerald-600 text-2xs font-bold">
-                  <FaArrowUp />
-                </span>
-                <div>
-                  <span className="text-sm font-bold text-emerald-600">{stat.change}</span>
-                  <span className="text-2xs text-slate-400 block -mt-0.5">vs last month</span>
-                </div>
-              </div>
-              
-              {/* SVG Sparkline */}
-              <div className="w-28 h-10">
-                <svg width="100%" height="100%" viewBox="0 0 120 36" className="overflow-visible">
-                  <defs>
-                    <linearGradient id={`grad-${index}`} x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor={index === 0 ? "#6366f1" : index === 1 ? "#10b981" : "#06b6d4"} stopOpacity="0.25"/>
-                      <stop offset="100%" stopColor={index === 0 ? "#6366f1" : index === 1 ? "#10b981" : "#06b6d4"} stopOpacity="0.00"/>
-                    </linearGradient>
-                  </defs>
-                  {/* Fill Area */}
-                  <path
-                    d={getSparklineAreaPath(stat.sparkline, 120, 36)}
-                    fill={`url(#grad-${index})`}
-                  />
-                  {/* Stroke Line */}
-                  <path
-                    d={getSparklinePath(stat.sparkline, 120, 36)}
-                    fill="none"
-                    stroke={index === 0 ? "#6366f1" : index === 1 ? "#10b981" : "#06b6d4"}
-                    strokeWidth="2.5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
               </div>
             </div>
           </div>
@@ -237,7 +195,7 @@ const Dashboard = () => {
               <div key={idx} className="flex-1 flex flex-col items-center z-10 group cursor-pointer h-full justify-end">
                 <div className="flex items-end gap-1.5 w-full justify-center h-44 mb-2">
                   {/* User Bar */}
-                  <div 
+                  <div
                     style={{ height: `${(bar.users / 120) * 100}%` }}
                     className="w-3 md:w-4 bg-indigo-500 rounded-t-md hover:bg-indigo-600 transition-all duration-300 relative group-hover:scale-y-105 origin-bottom"
                   >
@@ -246,7 +204,7 @@ const Dashboard = () => {
                     </div>
                   </div>
                   {/* Merchant Bar */}
-                  <div 
+                  <div
                     style={{ height: `${(bar.merchants / 120) * 100}%` }}
                     className="w-3 md:w-4 bg-emerald-500 rounded-t-md hover:bg-emerald-600 transition-all duration-300 relative group-hover:scale-y-105 origin-bottom"
                   >
@@ -289,7 +247,7 @@ const Dashboard = () => {
                     </span>
                   </div>
                   <div className={`w-full h-2 rounded-full ${category.track}`}>
-                    <div 
+                    <div
                       className={`h-full rounded-full ${category.color} transition-all duration-500`}
                       style={{ width: `${category.percentage}%` }}
                     ></div>
@@ -298,7 +256,7 @@ const Dashboard = () => {
               ))}
             </div>
           </div>
-          
+
           <div className="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-400">
             <span>Total listings: 89 services</span>
             <span className="font-semibold text-indigo-650 cursor-pointer hover:underline">View Categories</span>
@@ -340,14 +298,13 @@ const Dashboard = () => {
                       <p className="text-xs text-slate-400">{item.time}</p>
                     </div>
                   </div>
-                  
+
                   <div className="flex items-center gap-3">
                     <span
-                      className={`px-2.5 py-1 rounded-lg text-2xs font-bold uppercase tracking-wider border ${
-                        item.status === "approved"
-                          ? "bg-emerald-50 text-emerald-700 border-emerald-100"
-                          : "bg-amber-50 text-amber-700 border-amber-100"
-                      }`}
+                      className={`px-2.5 py-1 rounded-lg text-2xs font-bold uppercase tracking-wider border ${item.status === "approved"
+                        ? "bg-emerald-50 text-emerald-700 border-emerald-100"
+                        : "bg-amber-50 text-amber-700 border-amber-100"
+                        }`}
                     >
                       {item.status}
                     </span>
@@ -366,7 +323,7 @@ const Dashboard = () => {
           <div>
             <h3 className="text-lg font-bold text-slate-900 mb-1">System Health</h3>
             <p className="text-xs text-slate-400 mb-6">Connection health and services state.</p>
-            
+
             <div className="space-y-4">
               {[
                 { name: "Server Node API", status: "Online", latency: "24ms", icon: <FaServer className="text-indigo-500" /> },
