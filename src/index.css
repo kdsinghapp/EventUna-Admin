@@ -8,26 +8,32 @@
 .border {
   border-width: 1px !important;
   border-style: solid !important;
+  border-color: #e2e8f0;
 }
 .border-t {
   border-top-width: 1px !important;
   border-style: solid !important;
+  border-color: #e2e8f0;
 }
 .border-b {
   border-bottom-width: 1px !important;
   border-style: solid !important;
+  border-color: #e2e8f0;
 }
 .border-l {
   border-left-width: 1px !important;
   border-style: solid !important;
+  border-color: #e2e8f0;
 }
 .border-r {
   border-right-width: 1px !important;
   border-style: solid !important;
+  border-color: #e2e8f0;
 }
 .border-2 {
   border-width: 2px !important;
   border-style: solid !important;
+  border-color: #e2e8f0;
 }
 
 
